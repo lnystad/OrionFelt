@@ -38,6 +38,12 @@ TestResult.xml
 [Rr]eleasePS/
 dlldata.c
 
+
+ # DNX 
+ project.lock.json 
+ artifacts/ 
+ 
+
 *_i.c
 *_p.c
 *_i.h
@@ -70,6 +76,7 @@ _Chutzpah*
 ipch/
 *.aps
 *.ncb
+*.opendb 
 *.opensdf
 *.sdf
 *.cachefile
@@ -78,6 +85,7 @@ ipch/
 *.psess
 *.vsp
 *.vspx
+ *.sap
 
 # TFS 2012 Local Workspace
 $tf/
@@ -102,7 +110,8 @@ _TeamCity*
 # NCrunch
 _NCrunch_*
 .*crunch*.local.xml
-
+ nCrunchTemp_* 
+ 
 # MightyMoose
 *.mm.*
 AutoTest.Net/
@@ -147,8 +156,18 @@ publish/
 csx/
 *.build.csdef
 
+ # Microsoft Azure Emulator 
+ ecf/ 
+ rcf/ 
+ 
+
+ # Microsoft Azure ApplicationInsights config file 
+ ApplicationInsights.config 
+ 
+ 
 # Windows Store app package directory
 AppPackages/
+BundleArtifacts/
 
 # Others
 *.[Cc]ache
@@ -162,6 +181,7 @@ ClientBin/
 *.publishsettings
 node_modules/
 bower_components/
+orleans.codegen.cs
 
 # RIA/Silverlight projects
 Generated_Code/
@@ -186,6 +206,9 @@ UpgradeLog*.htm
 # Microsoft Fakes
 FakesAssemblies/
 
+ # GhostDoc plugin setting file 
+ *.GhostDoc.xml 
+ 
 # Node.js Tools for Visual Studio
 .ntvs_analysis.dat
 
@@ -194,3 +217,18 @@ FakesAssemblies/
 
 # Visual Studio 6 workspace options file
 *.opt
+# Visual Studio LightSwitch build output 
+ **/*.HTMLClient/GeneratedArtifacts 
+ **/*.DesktopClient/GeneratedArtifacts 
+ **/*.DesktopClient/ModelManifest.xml 
+ **/*.Server/GeneratedArtifacts 
+ **/*.Server/ModelManifest.xml 
+ _Pvt_Extensions 
+ 
+
+ # Paket dependency manager 
+ .paket/paket.exe 
+ 
+
+ # FAKE - F# Make 
+ .fake/
