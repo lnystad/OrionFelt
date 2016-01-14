@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="OrionLag.Lag.Views.LagView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:OrionLag.Lag.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="200"/>
+            <RowDefinition Height="100"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0">
+            <GroupBox  Name="test" BorderBrush="Black">
+                <Grid DataContext="Binding">
+                    <Grid.ColumnDefinitions >
+                        <ColumnDefinition  Name="Skive" Width="100"></ColumnDefinition>
+                        <ColumnDefinition Name="Navn" Width="100"></ColumnDefinition>
+                        <ColumnDefinition Name="Klasse" Width="100"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0" Grid.Column="0" Content="Skive:"/>
+                    <Label Grid.Row="0" Grid.Column="1" Content="Navn:"/>
+                    <Label Grid.Row="0" Grid.Column="2" Content="Klasse:"/>
+                </Grid>
+            </GroupBox>
+        </Border>
+        <Border Grid.Row="1">
+            <GroupBox  Name="test2" BorderBrush="Black">
+                <Button  Name="GenererLag" Height="20" Width="50"/>
+            </GroupBox>
+        </Border>
+    </Grid>
+</UserControl>

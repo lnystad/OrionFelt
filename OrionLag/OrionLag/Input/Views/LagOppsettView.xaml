@@ -1,0 +1,64 @@
+﻿<UserControl x:Class="OrionLag.Input.Views.LagOppsettView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:OrionLag.Input.Views"
+             xmlns:ViewModel="clr-namespace:OrionLag.Input.ViewModel"
+             xmlns:Wpf="clr-namespace:OrionLag.WPF"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="300"
+             d:DataContext="{d:DesignInstance ViewModel:LagOppsettViewModel}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="300"/>
+        </Grid.RowDefinitions>
+       <Grid Grid.Row="0">
+        <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <ListView Grid.Column="0" ItemsSource="{Binding LagKilde}" SelectedItem="{ Binding SelectedLag2}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <WrapPanel>
+                            <TextBlock Text="{Binding LagNavn}" FontWeight="Bold" />
+                            <TextBlock Text=" (" />
+                            <!--<TextBlock Text="{Binding LagTidText}" TextDecorations="Underline" Foreground="Blue" Cursor="Hand" />-->
+                            <TextBlock Text="{Binding LagTid, StringFormat=HH:mm:ss}" TextDecorations="Underline" Foreground="Blue" Cursor="Hand" />
+                            <TextBlock Text=")" />
+                        </WrapPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+
+            </ListView>
+            <DataGrid  Grid.Column="1" ItemsSource="{Binding Skiver}" SelectedItem="{Binding SelectedSkive}" x:Name="dataGrid" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="200"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Row="0" Grid.Column="0" Content="Sort" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" 	Width="75" Click="SortButton_OnClick"/>
+                <Button Grid.Row="1" Grid.Column="0" Margin="5,5,0,0"  Content="SetTimes" HorizontalAlignment="Left" VerticalAlignment="Top" 	Width="75" Click="SetTimesButton_OnClick"/>
+                <Grid Grid.Row="1" Grid.Column="0">
+                    <Label Content="Duration" Margin="5,30,0,0" Height="28" HorizontalAlignment="Left"  VerticalAlignment="Top" />
+                    <TextBox                  Margin="5,50,0,0" Height="23" Width="50" Text="{Binding LagDuration}"  HorizontalAlignment="Left" VerticalAlignment="Top" />
+                    <Label Content="Start" Margin="60,30,0,5" Height="28" HorizontalAlignment="Left"  VerticalAlignment="Top" />
+                    <TextBox    Margin="60,50,0,5" Height="23" Width="50"  Text="{Binding LagStart}"  HorizontalAlignment="Left" VerticalAlignment="Top" />
+                </Grid>
+                <Button Grid.Row="1" Grid.Column="1" Margin="5,5,0,0" Height="23" Content="GenerateFiles" HorizontalAlignment="Left" VerticalAlignment="Top" 	Width="80" Click="GenerateFilesButtonBase_OnClick"/>
+                <Grid Grid.Row="1" Grid.Column="1">
+                    <Wpf:FileSelector Margin="5,50,0,0" Height="23" HorizontalAlignment="Left" VerticalAlignment="Top" FileName="{Binding FilePath}" Mode="Folder" />
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+
+</UserControl>

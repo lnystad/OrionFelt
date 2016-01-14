@@ -1,0 +1,19 @@
+﻿<UserControl x:Class="OrionLag.WPF.FileSelector"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:dc="http://DIPS.no/Infrastructure/UI"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Border BorderBrush="#FF919191" BorderThickness="1">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBox x:Name="txtFileName" Margin="1,1,13,1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                  BorderThickness="0" Grid.Column="0" Grid.ColumnSpan="2" TextChanged="TxtFileName_OnTextChanged"/>
+
+            <Button x:Name="btnBrowse" Content="..." Click="btnBrowse_Click" Opacity="0.8" ToolTip="Click to open file browser." Grid.Column="1"/>
+        </Grid>
+    </Border>
+</UserControl>
