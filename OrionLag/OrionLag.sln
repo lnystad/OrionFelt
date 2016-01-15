@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrionLag.Common", "Common\O
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrionLag.Server", "Server\OrionLag.Server\OrionLag.Server.csproj", "{46E32C6F-FA9E-4BAF-9CAF-3BA28823940D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrionLag.Service.Server", "Server\OrionLag.Service.Servers\OrionLag.Service.Server.csproj", "{BBD36083-EA3A-4E89-8EB1-3ED9D89BDB0F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrionLag.Service.Server", "Server\OrionLag.Service.Server\OrionLag.Service.Server.csproj", "{BBD36083-EA3A-4E89-8EB1-3ED9D89BDB0F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
