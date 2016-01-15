@@ -3,7 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrionLag", "OrionLag\OrionLag.csproj", "{A65F6D7C-FA05-420C-8532-2FB6AA788C58}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{2D1CD754-D06B-49FC-B4F8-FA52ADC4C3B0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{258AF6C7-7EA4-46BA-9F80-834049D6D6F9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{E274FEFA-3451-43DC-B7C7-62CE7683FD96}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrionLag.Client", "Client\OrionLag\OrionLag.Client.csproj", "{A65F6D7C-FA05-420C-8532-2FB6AA788C58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrionLag.Common", "Common\OrionLag.Common\OrionLag.Common.csproj", "{58505D8C-8899-4CB5-882B-99C19468EC48}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrionLag.Server", "Server\OrionLag.Server\OrionLag.Server.csproj", "{46E32C6F-FA9E-4BAF-9CAF-3BA28823940D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrionLag.Service.Server", "Server\OrionLag.Service.Servers\OrionLag.Service.Server.csproj", "{BBD36083-EA3A-4E89-8EB1-3ED9D89BDB0F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +27,26 @@ Global
 		{A65F6D7C-FA05-420C-8532-2FB6AA788C58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A65F6D7C-FA05-420C-8532-2FB6AA788C58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A65F6D7C-FA05-420C-8532-2FB6AA788C58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58505D8C-8899-4CB5-882B-99C19468EC48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58505D8C-8899-4CB5-882B-99C19468EC48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58505D8C-8899-4CB5-882B-99C19468EC48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58505D8C-8899-4CB5-882B-99C19468EC48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46E32C6F-FA9E-4BAF-9CAF-3BA28823940D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46E32C6F-FA9E-4BAF-9CAF-3BA28823940D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46E32C6F-FA9E-4BAF-9CAF-3BA28823940D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46E32C6F-FA9E-4BAF-9CAF-3BA28823940D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBD36083-EA3A-4E89-8EB1-3ED9D89BDB0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBD36083-EA3A-4E89-8EB1-3ED9D89BDB0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBD36083-EA3A-4E89-8EB1-3ED9D89BDB0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBD36083-EA3A-4E89-8EB1-3ED9D89BDB0F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A65F6D7C-FA05-420C-8532-2FB6AA788C58} = {2D1CD754-D06B-49FC-B4F8-FA52ADC4C3B0}
+		{58505D8C-8899-4CB5-882B-99C19468EC48} = {258AF6C7-7EA4-46BA-9F80-834049D6D6F9}
+		{46E32C6F-FA9E-4BAF-9CAF-3BA28823940D} = {E274FEFA-3451-43DC-B7C7-62CE7683FD96}
+		{BBD36083-EA3A-4E89-8EB1-3ED9D89BDB0F} = {E274FEFA-3451-43DC-B7C7-62CE7683FD96}
 	EndGlobalSection
 EndGlobal
