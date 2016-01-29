@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace OrionLag.Server.Services
 {
+    using System.IO;
+
     using OrionLag.Common.Configuration;
     using OrionLag.Common.DataModel;
     using OrionLag.Common.Diagnosis;
@@ -23,11 +25,24 @@ namespace OrionLag.Server.Services
             m_inputPath = ConfigurationLoader.GetAppSettingsValue("InputDataPath");
         }
 
-        public List<InputData> GetAllComptitiors()
+        public List<InputData> GetAllComptitiors(string path, string filename)
         {
             try
             {
-                var input = InputFileParser.ParseFile(m_inputPath, "INPUT.TXT");
+                string pathToUse = path;
+                if (string.IsNullOrEmpty(path))
+                {
+                    pathToUse = m_inputPath;
+                }
+
+                string filenameToUse = filename;
+                if (string.IsNullOrEmpty(filenameToUse))
+                {
+                    filenameToUse = "INPUT.TXT";
+                }
+
+
+                var input = InputFileParser.ParseFile(pathToUse, filenameToUse);
                 return input;
             }
             catch (Exception e)

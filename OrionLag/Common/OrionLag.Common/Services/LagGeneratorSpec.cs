@@ -18,5 +18,6 @@ namespace OrionLag.Common.Services
         public int MinutesEachTeam { get; set; }
 
         public DateTime? StartTime { get; set; }
+        public int OrionHoldId { get; set; }
     }
 }

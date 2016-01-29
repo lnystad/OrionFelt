@@ -8,6 +8,7 @@ namespace OrionLag.ViewModel
 {
     using System.Collections.ObjectModel;
     using System.ComponentModel;
+    using System.IO;
     using System.Windows;
 
     using OrionLag.Common.DataModel;
@@ -15,6 +16,7 @@ namespace OrionLag.ViewModel
     using OrionLag.Common.Utils;
     using OrionLag.Input.ViewModel;
     using OrionLag.Input.Views;
+    using OrionLag.Server.Services;
     using OrionLag.WpfBase;
 
     public class UserInputControlViewModel : TargetWindowBase
@@ -65,6 +67,17 @@ namespace OrionLag.ViewModel
                 SetProperty(ref m_startLagNr, value, () => StartLagNr);
             }
         }
+
+        private int m_orionHoldId;
+        public int OrionHoldId
+        {
+            get { return m_orionHoldId; }
+            set
+            {
+                SetProperty(ref m_orionHoldId, value, () => OrionHoldId);
+            }
+        }
+        
 
         private int m_antallSkiver;
         public int AntallSkiver
@@ -126,6 +139,18 @@ namespace OrionLag.ViewModel
             }
         }
 
+        private string m_filePath;
+        public string FilePath
+        {
+            get { return m_filePath; }
+            set
+            {
+                SetProperty(ref m_filePath, value, () => FilePath);
+            }
+        }
+
+        
+
         public ObservableCollection<InputData> InputRows
         {
             get { return m_inputRows; }
@@ -137,9 +162,20 @@ namespace OrionLag.ViewModel
 
         public void OnReadInputbutton_OnClick(object sender, RoutedEventArgs routedEventArgs)
         {
-            var input = m_inputService.GetAllComptitiors();
-
-            InputRows = new ObservableCollection<InputData>(input);
+            if (string.IsNullOrEmpty(this.FilePath))
+            {
+                var input = m_inputService.GetAllComptitiors(null, null);
+                InputRows = new ObservableCollection<InputData>(input);
+            }
+            else
+            {
+                var filename = Path.GetFileName(this.FilePath);
+                var dirName = Path.GetDirectoryName(this.FilePath);
+                var input = m_inputService.GetAllComptitiors(dirName, filename);
+                InputRows = new ObservableCollection<InputData>(input);
+            }
+            
+            
             return;
         }
 
@@ -157,7 +193,8 @@ namespace OrionLag.ViewModel
                                avbrekk = this.m_GenererAvbrekk,
                                MinutesEachTeam = this.m_minutesEachTeam,
                                StartLagNr = this.m_startLagNr,
-                               StartTime = this.m_startTime
+                               StartTime = this.m_startTime,
+                               OrionHoldId = this.m_orionHoldId
                            };
             var list = m_lagGeneratorService.GenererLag(InputRows.ToList(), spec);
             DateTime start = new DateTime(
@@ -172,7 +209,7 @@ namespace OrionLag.ViewModel
                 start = this.m_startTime.Value;
             }
 
-            LagOppsettViewModel viewmodel  = new LagOppsettViewModel(list, m_minutesEachTeam, start);
+            LagOppsettViewModel viewmodel  = new LagOppsettViewModel( new LagOppsettDataService(),list, m_minutesEachTeam, start);
             var view = new LagOppsettView(viewmodel);
 
             OpenWindow(view, "Data input");

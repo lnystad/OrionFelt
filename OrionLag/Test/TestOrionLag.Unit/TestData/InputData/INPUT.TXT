@@ -1,0 +1,6 @@
+﻿1;Fornavn Skytter1;  1116;Bodø Østre ;10584;R
+2;Skytter2 Skytter2; 1149;Bodø Østre ;10584;R
+3;Skytter3 Skytter3; 1124;Bodø Østre ;10584;R
+4;Fornavn-A Skytter4;1125;Bodø Østre ;10584;ER
+5;Fornavn A Skytter5;1126;Bodø Østre ;10584;R
+6;Skytter6 Skytter6; 1127;Bodø Østre ;10584;ER

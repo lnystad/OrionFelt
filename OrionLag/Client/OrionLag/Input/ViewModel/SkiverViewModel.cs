@@ -31,7 +31,7 @@ namespace OrionLag.Input.ViewModel
         public int LagNummer { get; set; }
         public int SkiveNummer { get; set; }
 
-        public int SkytterNr { get; set; }
+        public string SkytterNr { get; set; }
         public string Name { get; set; }
 
         public string Skytterlag { get; set; }

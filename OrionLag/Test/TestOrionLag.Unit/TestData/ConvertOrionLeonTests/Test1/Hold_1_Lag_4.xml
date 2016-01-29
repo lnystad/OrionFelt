@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Lag xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <OrionHoldId>0</OrionHoldId>
+  <LagNummer>4</LagNummer>
+  <LagTid>2016-01-28T08:18:00</LagTid>
+  <MaxSkiveNummer>0</MaxSkiveNummer>
+  <SkiverILaget>
+    <Skiver>
+      <SkiveNummer>7</SkiveNummer>
+      <Skytter>
+        <Id>674e3b45-2fc5-45c8-93b2-50c7f4f7f42b</Id>
+        <SkytterNr>1116</SkytterNr>
+        <Name> Fornavn Skytter1</Name>
+        <Fornavn> Fornavn</Fornavn>
+        <EtterNavn>Skytter1</EtterNavn>
+        <Skytterlag>Bodø Østre </Skytterlag>
+        <SkytterlagNr>0</SkytterlagNr>
+        <Klasse>R</Klasse>
+        <TotalSum>0</TotalSum>
+      </Skytter>
+      <SkytterGuid>674e3b45-2fc5-45c8-93b2-50c7f4f7f42b</SkytterGuid>
+      <Free>false</Free>
+    </Skiver>
+    <Skiver>
+      <SkiveNummer>8</SkiveNummer>
+      <Skytter>
+        <Id>e1c11c3e-270b-4afb-961a-8c7c9d448e70</Id>
+        <SkytterNr>1149</SkytterNr>
+        <Name> Skytter2 Skytter2</Name>
+        <Fornavn> Skytter2</Fornavn>
+        <EtterNavn>Skytter2</EtterNavn>
+        <Skytterlag>Bodø Østre </Skytterlag>
+        <SkytterlagNr>0</SkytterlagNr>
+        <Klasse>R</Klasse>
+        <TotalSum>0</TotalSum>
+      </Skytter>
+      <SkytterGuid>e1c11c3e-270b-4afb-961a-8c7c9d448e70</SkytterGuid>
+      <Free>false</Free>
+    </Skiver>
+    <Skiver>
+      <SkiveNummer>5</SkiveNummer>
+      <Skytter>
+        <Id>2ef36172-6ff4-43b0-bf14-3e76317e85e5</Id>
+        <SkytterNr>1124</SkytterNr>
+        <Name> Skytter3 Skytter3</Name>
+        <Fornavn> Skytter3</Fornavn>
+        <EtterNavn>Skytter3</EtterNavn>
+        <Skytterlag>Bodø Østre </Skytterlag>
+        <SkytterlagNr>0</SkytterlagNr>
+        <Klasse>R</Klasse>
+        <TotalSum>0</TotalSum>
+      </Skytter>
+      <SkytterGuid>2ef36172-6ff4-43b0-bf14-3e76317e85e5</SkytterGuid>
+      <Free>false</Free>
+    </Skiver>
+    <Skiver>
+      <SkiveNummer>6</SkiveNummer>
+      <Skytter>
+        <Id>d685d62b-92e1-44de-91fa-f0a54bfa7127</Id>
+        <SkytterNr>1125</SkytterNr>
+        <Name> Fornavn-A Skytter4</Name>
+        <Fornavn> Fornavn-A</Fornavn>
+        <EtterNavn>Skytter4</EtterNavn>
+        <Skytterlag>Bodø Østre </Skytterlag>
+        <SkytterlagNr>0</SkytterlagNr>
+        <Klasse>ER</Klasse>
+        <TotalSum>0</TotalSum>
+      </Skytter>
+      <SkytterGuid>d685d62b-92e1-44de-91fa-f0a54bfa7127</SkytterGuid>
+      <Free>false</Free>
+    </Skiver>
+    <Skiver>
+      <SkiveNummer>3</SkiveNummer>
+      <Skytter>
+        <Id>a6cf0de5-6742-4d0e-9af4-fdbd83ffa4e2</Id>
+        <SkytterNr>1126</SkytterNr>
+        <Name> Fornavn A Skytter5</Name>
+        <Fornavn> Fornavn A</Fornavn>
+        <EtterNavn>Skytter5</EtterNavn>
+        <Skytterlag>Bodø Østre </Skytterlag>
+        <SkytterlagNr>0</SkytterlagNr>
+        <Klasse>R</Klasse>
+        <TotalSum>0</TotalSum>
+      </Skytter>
+      <SkytterGuid>a6cf0de5-6742-4d0e-9af4-fdbd83ffa4e2</SkytterGuid>
+      <Free>false</Free>
+    </Skiver>
+    <Skiver>
+      <SkiveNummer>4</SkiveNummer>
+      <Skytter>
+        <Id>0a0ddeb6-5993-4e4c-85d6-329ea80b8eb0</Id>
+        <SkytterNr>1127</SkytterNr>
+        <Name> Skytter6 Skytter6</Name>
+        <Fornavn> Skytter6</Fornavn>
+        <EtterNavn>Skytter6</EtterNavn>
+        <Skytterlag>Bodø Østre </Skytterlag>
+        <SkytterlagNr>0</SkytterlagNr>
+        <Klasse>ER</Klasse>
+        <TotalSum>0</TotalSum>
+      </Skytter>
+      <SkytterGuid>0a0ddeb6-5993-4e4c-85d6-329ea80b8eb0</SkytterGuid>
+      <Free>false</Free>
+    </Skiver>
+  </SkiverILaget>
+</Lag>

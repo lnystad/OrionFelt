@@ -1,5 +1,7 @@
 ﻿namespace OrionLag.Common.DataModel
 {
+    using System;
+
     public class Skiver
     {
       
@@ -14,6 +16,7 @@
             if (copy.Skytter != null)
             {
                 this.Skytter = new Skytter(copy.Skytter);
+                this.SkytterGuid = copy.Skytter.Id;
             }
         }
 
@@ -24,7 +27,25 @@
 
         public int SkiveNummer { get; set; }
 
-        public Skytter Skytter { get; set; }
+        private Skytter m_skytter;
+
+        public Skytter Skytter
+        {
+            get
+            {
+                return m_skytter;
+            }
+            set
+            {
+                m_skytter = value;
+                if (m_skytter != null)
+                {
+                    SkytterGuid = m_skytter.Id;
+                }
+            }
+        }
+
+        public Guid? SkytterGuid { get; set; }
 
         public bool Free { get; set; }
     }

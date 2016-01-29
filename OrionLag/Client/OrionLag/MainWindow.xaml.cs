@@ -15,7 +15,12 @@ using System.Windows.Shapes;
 
 namespace OrionLag
 {
+    using System.Configuration;
+
+    using OrionLag.Common.Configuration;
+    using OrionLag.Common.Diagnosis;
     using OrionLag.Common.Utils;
+    using OrionLag.Input.ViewModel;
     using OrionLag.Input.Views;
     using OrionLag.Output.ViewModels;
     using OrionLag.Output.Views;
@@ -31,6 +36,24 @@ namespace OrionLag
         {
             InitializeComponent();
 
+            var logfile = ConfigurationLoader.GetAppSettingsValue("LogFile");
+
+            var LoggingLevelsString = ConfigurationLoader.GetAppSettingsValue("LoggingLevels");
+            LoggingLevels enumLowestTrace = LoggingLevels.Info;
+            if (!string.IsNullOrEmpty(LoggingLevelsString))
+            {
+                if (Enum.TryParse(LoggingLevelsString, true, out enumLowestTrace))
+                {
+                    enumLowestTrace = enumLowestTrace;
+                }
+                else
+                {
+                    enumLowestTrace = LoggingLevels.Info;
+                }
+            }
+
+            var fileAppsender = new FileAppender(logfile, enumLowestTrace, LoggingLevels.Trace);
+            Log.AddAppender(fileAppsender);
         }
 
         private void OpenWindow(object windowContent, string title = null)
@@ -58,9 +81,8 @@ namespace OrionLag
 
         private void InputMenuItemFinFeltOpen_Click(object sender, RoutedEventArgs e)
         {
-
-            TargetOutputControlViewModel viewModel = new TargetOutputControlViewModel(new OppropDataService());
-            OpenWindow(new TargetOutputControlView(viewModel), "Data input");
+            LagOppsettViewModel viewModel = new LagOppsettViewModel(new LagOppsettDataService(),new List<Common.DataModel.Lag>(), -1, DateTime.MinValue);
+            OpenWindow(new LagOppsettView(viewModel), "Data input");
             
         }
 

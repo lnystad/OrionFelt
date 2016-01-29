@@ -46,6 +46,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Button Grid.Row="0" Grid.Column="0" Content="Sort" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" 	Width="75" Click="SortButton_OnClick"/>
+                <Button Grid.Row="0" Grid.Column="1" Content="LeonExport" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" 	Width="75" Click="LeonExportButton_OnClick"/>
                 <Button Grid.Row="1" Grid.Column="0" Margin="5,5,0,0"  Content="SetTimes" HorizontalAlignment="Left" VerticalAlignment="Top" 	Width="75" Click="SetTimesButton_OnClick"/>
                 <Grid Grid.Row="1" Grid.Column="0">
                     <Label Content="Duration" Margin="5,30,0,0" Height="28" HorizontalAlignment="Left"  VerticalAlignment="Top" />
@@ -53,10 +54,11 @@
                     <Label Content="Start" Margin="60,30,0,5" Height="28" HorizontalAlignment="Left"  VerticalAlignment="Top" />
                     <TextBox    Margin="60,50,0,5" Height="23" Width="50"  Text="{Binding LagStart}"  HorizontalAlignment="Left" VerticalAlignment="Top" />
                 </Grid>
-                <Button Grid.Row="1" Grid.Column="1" Margin="5,5,0,0" Height="23" Content="GenerateFiles" HorizontalAlignment="Left" VerticalAlignment="Top" 	Width="80" Click="GenerateFilesButtonBase_OnClick"/>
+                <Button Grid.Row="1" Grid.Column="1" Margin="5,5,0,0" Height="23" Content="Generate" HorizontalAlignment="Left" VerticalAlignment="Top" 	Width="60" Click="GenerateFilesButtonBase_OnClick"/>
                 <Grid Grid.Row="1" Grid.Column="1">
-                    <Wpf:FileSelector Margin="5,50,0,0" Height="23" HorizontalAlignment="Left" VerticalAlignment="Top" FileName="{Binding FilePath}" Mode="Folder" />
+                    <Wpf:FileSelector Margin="5,50,0,0" Height="23" Width="130" HorizontalAlignment="Left" VerticalAlignment="Top" FileName="{Binding FilePath}" Mode="Folder" />
                 </Grid>
+                <Button Grid.Row="1" Grid.Column="1" Margin="75,5,0,0" Height="23" Content="ReadData" HorizontalAlignment="Left" VerticalAlignment="Top" 	Width="60" Click="ReadDatabaseButtonBase_OnClick"/>
             </Grid>
         </Grid>
     </Grid>

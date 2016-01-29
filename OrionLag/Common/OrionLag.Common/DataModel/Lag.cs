@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Runtime.Serialization;
 
     [DataContract]
@@ -20,25 +21,29 @@
             this.LagNummer = copy.LagNummer;
             this.LagTid = copy.LagTid;
             this.MaxSkiveNummer = copy.MaxSkiveNummer;
-
+            this.OrionHoldId = copy.OrionHoldId;
             foreach (var skive in copy.SkiverILaget)
             {
                 this.SkiverILaget.Add(new Skiver(skive));
             }
         }
 
-        public Lag(int lagNummer, int maxSkiveriLaget)
+        public Lag(int lagNummer,int orionHoldId,int maxSkiveriLaget)
         {
             this.SkiverILaget  = new List<Skiver>();
             this.LagNummer = lagNummer;
             this.maxSkiveriLaget = maxSkiveriLaget;
-            int skiveteller = 1;
-            while (skiveteller <= maxSkiveriLaget)
-            {
-                this.SkiverILaget.Add(new Skiver(skiveteller));
-                skiveteller++;
-            }
+            this.OrionHoldId = orionHoldId;
+            //int skiveteller = 1;
+                this.SkiverILaget = new List<Skiver>();
+            //while (skiveteller <= maxSkiveriLaget)
+            //{
+            //    this.SkiverILaget.Add(new Skiver(skiveteller));
+            //    skiveteller++;
+            //}
         }
+        [DataMember]
+        public int OrionHoldId { get; set; }
 
         [DataMember]
         public int LagNummer { get; set; }
@@ -74,7 +79,31 @@
                 }
             }
 
+            if (forsteSkive <= this.maxSkiveriLaget)
+            {
+                var skive = new Skiver(forsteSkive);
+                this.SkiverILaget.Add(skive);
+                return skive;
+            }
+
             return null;
+        }
+
+        public Skiver GetSkiveNr(int skiveNr)
+        {
+            foreach (var skive in this.SkiverILaget)
+            {
+                if (skive.SkiveNummer == skiveNr)
+                {
+                        return skive;
+                }
+            }
+            Skiver sk= new Skiver(skiveNr);
+
+            this.SkiverILaget.Add(sk);
+            this.SkiverILaget = this.SkiverILaget.OrderBy(x => x.SkiveNummer).ToList();
+            
+            return sk;
         }
     }
 }

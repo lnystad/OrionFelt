@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OrionLag.Server</RootNamespace>
     <AssemblyName>OrionLag.Server</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -56,6 +56,14 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Database\DatabaseEngine.cs" />
+    <Compile Include="Engine\ConvertOrionLeon.cs" />
+    <Compile Include="Engine\LeonCommunicationDetection.cs" />
+    <Compile Include="Engine\OrionCommunicationDetection.cs" />
+    <Compile Include="Engine\ComEngine.cs" />
+    <Compile Include="Parsers\OrionResultParser.cs" />
+    <Compile Include="Parsers\OrionInputParser.cs" />
+    <Compile Include="Parsers\SkuddVerdiParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -69,7 +77,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Services\ExportLeonFormatService.cs" />
     <Compile Include="Services\InputPatitionersService.cs" />
+    <Compile Include="Services\LagOppsettDataService.cs" />
     <Compile Include="Services\OppropDataService.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -86,6 +96,14 @@
       <Project>{58505d8c-8899-4cb5-882b-99c19468ec48}</Project>
       <Name>OrionLag.Common</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Xslt\LeonFormat.xslt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Xslt\ExampleLag.xml">
+      <SubType>Designer</SubType>
+    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

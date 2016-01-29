@@ -1,0 +1,12 @@
+﻿1;1;1;1116; Fornavn Skytter1 Fornavn Skytter1;Bodø Østre ;R;0;X9**87
+1;1;2;1149; Skytter2 Skytter2;Bodø Østre ;R;0;69**87
+1;2;1;1124; Skytter3 Skytter3;Bodø Østre ;R;0;X8**87
+1;2;2;1125; Fornavn-A Skytter4  Fornavn-A Skytter4;Bodø Østre ;ER;0;49**87
+1;2;3;1116; Fornavn Skytter1 Fornavn Skytter1;Bodø Østre ;R;0;XX**X0
+1;2;4;1149; Skytter2 Skytter2;Bodø Østre ;R;0;XXXXXX
+1;3;1;1126; Fornavn A Skytter5 Fornavn A Skytter5;Bodø Østre ;R;0;456789
+1;3;2;1127; Skytter6 Skytter6;Bodø Østre ;ER;0;567895
+1;3;3;1124; Skytter3 Skytter3;Bodø Østre ;R;0;XX**X0
+1;3;4;1125; Fornavn-A Skytter4  Fornavn-A Skytter4;Bodø Østre ;ER;0;XX**X0
+1;3;5;1116; Fornavn Skytter1 Fornavn Skytter1;Bodø Østre ;R;0;XX**X0
+1;3;6;1149; Skytter2 Skytter2;Bodø Østre ;R;0;XXXXXX

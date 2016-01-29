@@ -11,6 +11,6 @@ namespace OrionLag.Common.Services
     public interface IInputPatitionerService
     {
 
-        List<InputData> GetAllComptitiors();
+        List<InputData> GetAllComptitiors(string path, string filename);
     }
 }

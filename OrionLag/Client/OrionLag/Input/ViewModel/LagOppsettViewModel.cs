@@ -15,19 +15,33 @@ namespace OrionLag.Input.ViewModel
     using System.Xml.Serialization;
 
     using OrionLag.Common.DataModel;
+    using OrionLag.Common.Services;
+    using OrionLag.Server.Services;
+    using OrionLag.WpfBase;
 
-    public class LagOppsettViewModel : INotifyPropertyChanged
+    public class LagOppsettViewModel : TargetWindowBase
     {
+        private IExportLeonFormatService m_exportService;
+        private ILagOppsettDataService m_databaseService;
         private List<Lag> lagOppsett;
-        public LagOppsettViewModel(List<Lag> lagOppsett,int minutes,DateTime startTime)
+        public LagOppsettViewModel(ILagOppsettDataService oppsetService, List<Lag> lagOppsett,int minutes,DateTime startTime)
         {
-            lagOppsett = lagOppsett;
-            m_inputRows = new ObservableCollection<Lag>(lagOppsett);
-            m_skiver = new ObservableCollection<SkiverViewModel>();
-            this.LagKilde = new ObservableCollection<Lag>();
+            m_databaseService = oppsetService;
+            InitModel();
             LagStart = startTime.ToString("HH:mm");
             LagDuration = minutes.ToString();
-            var sortedlagOppsett= lagOppsett.OrderBy(o => o.LagNummer).ToList();
+            InitGrid(lagOppsett);
+        }
+
+        private void InitGrid(List<Lag> lagInput)
+        {
+            lagOppsett = lagInput;
+            m_inputRows = new ObservableCollection<Lag>(lagInput);
+            m_skiver = new ObservableCollection<SkiverViewModel>();
+            this.LagKilde = new ObservableCollection<Lag>();
+            
+            var sortedlagOppsett = lagOppsett.OrderBy(o => o.LagNummer).ToList();
+            
             foreach (var lag in sortedlagOppsett)
             {
                 this.LagKilde.Add(lag);
@@ -37,6 +51,31 @@ namespace OrionLag.Input.ViewModel
                     m_skiver.Add(item: new SkiverViewModel(lag.LagNummer, skive));
                 }
             }
+
+            if (sortedlagOppsett.Count > 0)
+            {
+                if (sortedlagOppsett[0].LagTid.HasValue)
+                {
+                    LagStart = sortedlagOppsett[0].LagTid.Value.ToString("HH:mm");
+                }
+
+                if (sortedlagOppsett.Count > 1)
+                {
+                    if (sortedlagOppsett[1].LagTid.HasValue && sortedlagOppsett[0].LagTid.HasValue)
+                    {
+                        TimeSpan s = sortedlagOppsett[1].LagTid.Value - sortedlagOppsett[0].LagTid.Value;
+                        LagDuration = s.TotalMinutes.ToString();
+                    }
+                }
+            }
+
+            SortGrid();
+        }
+
+        private void InitModel()
+        {
+            var config = m_databaseService.GetOppsettConfig();
+            this.m_filePath = config.PathFinfelt;
         }
 
         private void SortGrid()
@@ -46,8 +85,8 @@ namespace OrionLag.Input.ViewModel
 
             var sortskiver = m_skiver.OrderBy(x => x.LagNummer).ThenBy(y => y.SkiveNummer);
             m_skiver = new ObservableCollection<SkiverViewModel>(sortskiver.ToList());
-            NotifyPropertyChanged("Skiver");
-            NotifyPropertyChanged("InputRows");
+            OnPropertyChanged("Skiver");
+            OnPropertyChanged("InputRows");
         }
 
 
@@ -57,8 +96,7 @@ namespace OrionLag.Input.ViewModel
             get { return m_lagDuration; }
             set
             {
-                m_lagDuration = value;
-                NotifyPropertyChanged("LagDuration");
+                SetProperty(ref m_lagDuration, value, () => LagDuration);
             }
         }
 
@@ -68,8 +106,7 @@ namespace OrionLag.Input.ViewModel
             get { return m_lagStart; }
             set
             {
-                m_lagStart = value;
-                NotifyPropertyChanged("LagStart");
+                SetProperty(ref m_lagStart, value, () => LagStart);
             }
         }
 
@@ -79,20 +116,11 @@ namespace OrionLag.Input.ViewModel
             get { return m_filePath; }
             set
             {
-                m_filePath = value;
-                NotifyPropertyChanged("FilePath");
+                SetProperty(ref m_filePath, value, () => FilePath);
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyPropertyChanged(String info)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(info));
-            }
-        }
+      
 
         private Lag m_selectedLag2;
         public Lag SelectedLag2
@@ -101,14 +129,17 @@ namespace OrionLag.Input.ViewModel
             set
             {
                 m_selectedLag2 = value;
+                this.OnPropertyChanged("SelectedLag2");
+
                 if (m_selectedLag2 != null)
                 {
+                    m_selectedSkive = null;
+                    this.OnPropertyChanged("SelectedSkive");
                     m_selectedSkive = Skiver.FirstOrDefault(x => x.LagNummer == m_selectedLag2.LagNummer);
                     
-                    NotifyPropertyChanged("SelectedSkive");
+                    this.OnPropertyChanged("SelectedSkive");
                 }
                 
-                NotifyPropertyChanged("SelectedLag2");
             }
         }
 
@@ -118,10 +149,7 @@ namespace OrionLag.Input.ViewModel
             get { return m_lagKilde; }
             set
             {
-                m_lagKilde = value;
-
-
-                NotifyPropertyChanged("LagKilde");
+                SetProperty(ref m_lagKilde, value, () => LagKilde);
             }
         }
 
@@ -132,8 +160,7 @@ namespace OrionLag.Input.ViewModel
             get { return m_selectedSkive; }
             set
             {
-                m_selectedSkive = value;
-                NotifyPropertyChanged("SelectedSkive");
+                SetProperty(ref m_selectedSkive, value, () => SelectedSkive);
             }
         }
 
@@ -143,8 +170,7 @@ namespace OrionLag.Input.ViewModel
             get { return m_skiver; }
             set
             {
-                m_skiver = value;
-                NotifyPropertyChanged("Skiver");
+                SetProperty(ref m_skiver, value, () => Skiver);
             }
         }
 
@@ -155,8 +181,7 @@ namespace OrionLag.Input.ViewModel
             get { return m_inputRows; }
             set
             {
-                m_inputRows = value;
-                NotifyPropertyChanged("InputRows");
+                SetProperty(ref m_inputRows, value, () => InputRows);
             }
         }
 
@@ -202,11 +227,21 @@ namespace OrionLag.Input.ViewModel
                 startTime = startTime.Add(span);
             }
 
+            foreach (var lag in m_inputRows)
+            {
+                var funnetlag = LagKilde.FirstOrDefault(x => x.LagNummer == lag.LagNummer);
+                if (funnetlag != null)
+                {
+                    lag.LagTid = funnetlag.LagTid;
+                }
+
+            }
+
             var test = LagKilde;
             LagKilde = null;
-            NotifyPropertyChanged("LagKilde");
+            this.OnPropertyChanged("LagKilde");
             LagKilde = test;
-            NotifyPropertyChanged("LagKilde");
+            this.OnPropertyChanged("LagKilde");
         }
 
         public void SortButton_OnClick(object sender, RoutedEventArgs routedEventArgs)
@@ -245,20 +280,26 @@ namespace OrionLag.Input.ViewModel
 
                 funnetSkive.Free = funnetSkive.Free;
             }
+            m_databaseService.StoreToDatabase(lagCollection, this.m_filePath);
+        }
 
-            XmlSerializer ser = new XmlSerializer(typeof(Lag));
-
-            foreach (var utskriftsLag in lagCollection)
+        public void ReadDatabaseButtonBase_OnClick(object sender, RoutedEventArgs routedEventArgs)
+        {
+            if (string.IsNullOrEmpty(this.m_filePath))
             {
-                string filename = Path.Combine(m_filePath, string.Format("Hold_{0}_Lag_{1}.xml","1", utskriftsLag.LagNummer));
-                
-                using (XmlWriter Write = new XmlTextWriter(filename, Encoding.UTF8))
-                {
-                    ser.Serialize(Write, utskriftsLag);
-                }
+                return;
             }
-            
-            
+
+            var readlag = m_databaseService.GetAllFromDatabase(this.m_filePath);
+            InitGrid(readlag.ToList());
+        }
+
+        public void LeonExportButton_OnClick(object sender, RoutedEventArgs routedEventArgs)
+        {
+            m_exportService = new ExportLeonFormatService();
+            var readlag = m_databaseService.GetAllFromDatabase(this.m_filePath);
+
+            m_exportService.GenerateLeonFormat(readlag.ToList());
         }
     }
 }

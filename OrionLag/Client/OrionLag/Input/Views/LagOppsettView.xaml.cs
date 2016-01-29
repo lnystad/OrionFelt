@@ -43,6 +43,16 @@ namespace OrionLag.Input.Views
             }
         }
 
+        private void LeonExportButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            var viewModel = DataContext as LagOppsettViewModel;
+            if (viewModel != null)
+            {
+                viewModel.LeonExportButton_OnClick(sender, e);
+            }
+        }
+        
+
         private void SetTimesButton_OnClick(object sender, RoutedEventArgs e)
         {
             var viewModel = DataContext as LagOppsettViewModel;
@@ -60,5 +70,15 @@ namespace OrionLag.Input.Views
                 viewModel.GenerateFilesButtonBase_OnClick(sender, e);
             }
         }
+
+        private void ReadDatabaseButtonBase_OnClick(object sender, RoutedEventArgs e)
+        {
+            var viewModel = DataContext as LagOppsettViewModel;
+            if (viewModel != null)
+            {
+                viewModel.ReadDatabaseButtonBase_OnClick(sender, e);
+            }
+        }
+        
     }
 }
