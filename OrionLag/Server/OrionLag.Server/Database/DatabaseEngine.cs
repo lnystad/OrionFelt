@@ -398,5 +398,22 @@
 
             return foundTeam;
         }
+
+        public List<Lag> GetOrionLagWithSum(List<Lag> updatedLagList)
+        {
+            List<Lag> retColl = new List<Lag>();
+            if (updatedLagList == null)
+            {
+                return retColl;
+            }
+
+            foreach (var lag in updatedLagList)
+            {
+                
+            }
+
+
+            return retColl;
+        }
     }
 }

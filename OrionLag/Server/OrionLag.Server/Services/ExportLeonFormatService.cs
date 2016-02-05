@@ -54,12 +54,16 @@ namespace OrionLag.Server.Services
             }
         }
 
-        void IExportLeonFormatService.GenerateLeonFormat(List<Lag> itemsToConvert)
+        void IExportLeonFormatService.GenerateLeonFormat(List<Lag> items)
         {
             try
             {
+                List<Lag> itemsToConvert = items.OrderBy(x => x.LagNummer).ToList();
+                foreach (var lag in itemsToConvert)
+                {
+                    lag.SkiverILaget = lag.SkiverILaget.OrderBy(y => y.SkiveNummer).ToList();
+                }
 
-            
             if (itemsToConvert != null)
             {
                     var outputXmlStream = new MemoryStream { Position = 0 };
@@ -71,8 +75,12 @@ namespace OrionLag.Server.Services
 
                     var debugStrem = new MemoryStream(memStevne.ToArray());
                     debugStrem.Position = 0;
-                    XmlDocument doc = new XmlDocument();
-                    doc.Load(debugStrem);
+                    var settings = new XmlReaderSettings();
+
+                    XmlReader xmlReader = XmlReader.Create(debugStrem, settings);
+                    XmlDocument docdebug = new XmlDocument();
+                    docdebug.Load(xmlReader);
+
                     memStevne.Position = 0;
                     XPathDocument xpathDoc;
                     var enc = new UTF8Encoding(false);
@@ -94,6 +102,19 @@ namespace OrionLag.Server.Services
                         XmlTextWriter writer = new XmlTextWriter(fileexportName, encServer);
                         writer.Formatting = Formatting.Indented;
                         docSaver.Save(writer);
+                        writer.Flush();
+                        writer.Close();
+                        writer.Dispose();
+                    }
+
+                    string debugfileexportName = Path.Combine(m_exportDirLeon, "InputXml.xml");
+                    if (!string.IsNullOrEmpty(debugfileexportName))
+                    {
+                        Log.Info("Generating new DebugXml {0}", debugfileexportName);
+                        var encServer = Encoding.GetEncoding("UTF-8");
+                        XmlTextWriter writer = new XmlTextWriter(debugfileexportName, encServer);
+                        writer.Formatting = Formatting.Indented;
+                        docdebug.Save(writer);
                         writer.Flush();
                         writer.Close();
                         writer.Dispose();

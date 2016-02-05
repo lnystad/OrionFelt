@@ -7,7 +7,11 @@ using OrionLag.Server.Engine;
 
 namespace TestOrionLag.Unit
 {
+    using System.IO;
     using System.Linq;
+    using System.Text;
+    using System.Xml;
+    using System.Xml.Serialization;
 
     using OrionLag.Server.Services;
 
@@ -47,6 +51,22 @@ namespace TestOrionLag.Unit
             var res = ReadAllOrionData(m_testHelper);
 
             var lagOppsett = m_convert.ConvertToLeonLag(res);
+
+            var serLag = new XmlSerializer(typeof(List<Lag>));
+            var memoryStream = new MemoryStream();
+            var settings = new XmlWriterSettings();
+            settings.Indent = true;
+            settings.NewLineOnAttributes = false;
+            settings.Encoding = new UTF8Encoding(false);
+
+            using (XmlWriter Write = XmlWriter.Create(memoryStream, settings))
+            {
+                serLag.Serialize(Write, lagOppsett);
+            }
+
+            memoryStream.Position = 0;
+            XmlDocument doc = new XmlDocument();
+            doc.Load(memoryStream);
 
         }
 

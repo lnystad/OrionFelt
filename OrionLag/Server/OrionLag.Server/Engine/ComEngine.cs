@@ -36,9 +36,9 @@ namespace OrionLag.Server.Engine
                 {
                     List<Lag> inputFomLeon= null;
                     bool initCom = false;
+                    // Her sjekkes oppropslister fra Leon
                     if(this.m_leonCommDetection.CheckComfiles(out inputFomLeon,out initCom))
                     {
-                        
                         if (this.m_DatabaseEngine.UpdateDataBaseFromLeon(inputFomLeon, initCom))
                         {
                             Log.Info("FileDetected starting updating Orion");
@@ -61,9 +61,8 @@ namespace OrionLag.Server.Engine
 
                     List<SkytterResultat> inputFomOrion;
                     bool allresultsComm;
-                    //List<Lag> inputFomOrion = null;
-                    //bool initCom = false;
-                    //m_OrionCommDetection.CheckComfiles();
+
+                    // Her sjekkes Resultater fra Orion
                     if (this.m_OrionCommDetection.CheckComfiles(out inputFomOrion, out allresultsComm))
                     {
                         var leonResults = this.m_convertLeonToOrion.ConvertToLeonLag(inputFomOrion);
@@ -71,7 +70,6 @@ namespace OrionLag.Server.Engine
                         if (this.m_DatabaseEngine.UpdateDataBaseFromOrion(leonResults, allresultsComm))
                         {
                             Log.Info("FileDetected starting updating Leon");
-
 
                             while (!this.m_leonCommDetection.SendToLeon(leonResults, allresultsComm))
                             {
@@ -81,12 +79,32 @@ namespace OrionLag.Server.Engine
                                     break;
                                 }
                             }
+
+
+
                         }
                         else
                         {
                             Log.Info("FileDetected no update");
                         }
                     }
+
+                    List<Lag> updatedLagList = GetUpdatedLag(inputFomOrion, allresultsComm);
+
+                    if (updatedLagList != null && updatedLagList.Count > 0)
+                    {
+                        Log.Info("Sending Updated Lag to Orion");
+                        while (!this.m_OrionCommDetection.SendToOrion(updatedLagList))
+                        {
+                            Thread.Sleep(1000);
+                            if (this.m_stopMe)
+                            {
+                                break;
+                            }
+                        }
+                    }
+
+
 
                     Thread.Sleep(2000);
                 }
@@ -100,6 +118,59 @@ namespace OrionLag.Server.Engine
                 this.ExitCode = 10;
                 throw;
             }
+        }
+
+        private List<Lag> GetUpdatedLag(List<SkytterResultat> inputFomOrion, bool allresultsComm)
+        {
+            Lag retLag = null;
+
+            if (inputFomOrion == null && !allresultsComm)
+            {
+                return null;
+            }
+
+            foreach (var result in inputFomOrion)
+            {
+                int LagNo = result.LagNummer + 1;
+                if (retLag == null)
+                {
+                    retLag = new Lag(LagNo, result.OrionHoldId, 0);
+                }
+                else
+                {
+                    if (LagNo != retLag.LagNummer)
+                    {
+                        Log.Error(" Feil i lagnummer ved oppdatering av totresultat {0} forvantet={1}", LagNo, retLag.LagNummer);
+                        continue;
+                    }
+                }
+
+
+                if (result.Skytter != null)
+                {
+                    //var skive = new Skiver();
+                    //skive.Skytter = result.Skytter;
+                    //foreach (var skive in retLag.SkiverILaget)
+                    //{
+                    //    if (skive.Skytter != null)
+                    //    {
+                    //        if(skive.Skytter)
+                    //    }
+                    //}
+                }
+            }
+            if (retLag != null)
+            {
+                var input = new List<Lag>() { retLag };
+                var LeonLag = m_convertLeonToOrion.ConvertToLeonLag(input);
+                var updatedLag = m_DatabaseEngine.GetOrionLagWithSum(LeonLag);
+                var OrionLag = m_convertLeonToOrion.ConvertToOrionLag(updatedLag);
+                return OrionLag;
+            }
+
+
+            return null;
+
         }
 
         /// <summary>

@@ -31,7 +31,10 @@
                             {
                                 data.Order = Convert.ToInt32(elements[0]);
                                 data.Name = elements[1];
-
+                                if(!string.IsNullOrEmpty(data.Name))
+                                {
+                                    data.Name = data.Name.Trim();
+                                }
                                 if (!string.IsNullOrEmpty(elements[2]))
                                 {
                                     int nr = 0;
@@ -41,6 +44,10 @@
                                     }
                                 }
                                 data.Skytterlag = elements[3];
+                                if (!string.IsNullOrEmpty(data.Skytterlag))
+                                {
+                                    data.Skytterlag = data.Skytterlag.Trim();
+                                }
                                 if (!string.IsNullOrEmpty(elements[4]))
                                 {
                                     int nr = 0;
@@ -50,6 +57,10 @@
                                     }
                                 }
                                 data.Klasse = elements[5];
+                                if (!string.IsNullOrEmpty(data.Klasse))
+                                {
+                                    data.Klasse = data.Klasse.Trim();
+                                }
                                 restunVal.Add(data);
                             }
                         }

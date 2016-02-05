@@ -50,7 +50,7 @@
             <xsl:value-of select="SkiveNummer"/>
           </xsl:variable>
           <xsl:if test="Skytter/Id!=''">
-          <paamelding-skytter medlemsid="{Skytter/SkytterNr}" fornavn="{Skytter/Name}" etternavn="{Skytter/Name}" sklag-nr="10584" lag="{$LagNr}" skive="{$SkiveNr}" klasse="{Skytter/Klasse}" klasse-felt="{Skytter/Klasse}" klasse-skogslop="" kat-mf="0" kat-mb="1" kat-k="0" kat-l="0" kat-a="0" kat-n="0" kat-ft="" kat-22="0" kat-luft="0" gruppe="" />
+          <paamelding-skytter medlemsid="{Skytter/SkytterNr}" fornavn="{Skytter/Fornavn}" etternavn="{Skytter/EtterNavn}" sklag-nr="{Skytter/SkytterlagNr}" lag="{$LagNr}" skive="{$SkiveNr}" klasse="{Skytter/Klasse}" klasse-felt="{Skytter/Klasse}" klasse-skogslop="" kat-mf="0" kat-mb="1" kat-k="0" kat-l="0" kat-a="0" kat-n="0" kat-ft="" kat-22="0" kat-luft="0" gruppe="" />
           </xsl:if>
         </xsl:for-each>
       </xsl:for-each>

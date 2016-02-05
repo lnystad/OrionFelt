@@ -61,8 +61,9 @@
                                             Klasse = skytterIn.Klasse,
                                             Name = skytterIn.Name,
                                             Skytterlag = skytterIn.Skytterlag,
-                                            SkytterNr = skytterIn.SkytterNr.ToString()
-                                        };
+                                            SkytterNr = skytterIn.SkytterNr.ToString(),
+                                            SkytterlagNr = skytterIn.SkytterlagNr
+                    };
                     if (spec.avbrekk)
                     {
                         LagNr = LagNr + 2;

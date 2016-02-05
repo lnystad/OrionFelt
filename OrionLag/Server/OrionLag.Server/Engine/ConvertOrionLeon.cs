@@ -131,8 +131,6 @@ namespace OrionLag.Server.Engine
             foreach (var res in inputFomLeonSorted)
             {
                 Lag newres = new Lag();
-                int StartleonLagnr = res.LagNummer / m_AntallSkyttereILaget + 1;
-                
                 newres.OrionHoldId = res.OrionHoldId;
                 newres.LagTid = res.LagTid;
 
@@ -142,64 +140,73 @@ namespace OrionLag.Server.Engine
                     {
                         Log.Error("Fant skive uten nr");
                     }
-
+                    int StartLeonLag = res.LagNummer;
+                    int Leonserienr = 0;
                     int LeonLagNr;
-
-                    if (skive.SkiveNummer > m_AntallSkyttereILaget)
+                    int leonSkivenr;
+                    if (skive.SkiveNummer <= m_AntallSkyttereILaget)
                     {
-                        //Disse skal vi allerede ha inne
-                        int lagtilegg = skive.SkiveNummer % m_AntallSkyttereILaget;
-
+                        StartLeonLag = res.LagNummer;
+                        LeonLagNr = res.LagNummer;
+                        leonSkivenr = skive.SkiveNummer;
+                        Leonserienr = 1;
                     }
                     else
                     {
-                        newres.LagNummer = StartleonLagnr;
-                        if (skive.SkiveNummer == 1)
+                        int brok = (skive.SkiveNummer -1) / m_AntallSkyttereILaget;
+                        Leonserienr = brok + 1;
+                        LeonLagNr = StartLeonLag - brok;
+                        leonSkivenr = m_AntallSkyttereILaget - skive.SkiveNummer % this.m_AntallSkyttereILaget;
+
+                    }
+
+
+                    var funnetLag = OrionLag.FirstOrDefault(x => x.LagNummer == LeonLagNr);
+                    if (funnetLag != null)
+                    {
+                        Log.Trace("Fant lagnr {0} ut fra {1}", LeonLagNr, res.LagNummer);
+                    }
+                    else
+                    {
+                        funnetLag = new Lag(LeonLagNr, res.OrionHoldId, m_AntallSkyttereILaget);
+                        funnetLag.LagTid = res.LagTid;
+                        OrionLag.Add(funnetLag);
+                    }
+
+                    var funnetSkive = funnetLag.SkiverILaget.FirstOrDefault(x => x.SkiveNummer == leonSkivenr);
+                    if (funnetSkive == null)
+                    {
+                        funnetSkive = new Skiver { SkiveNummer = leonSkivenr };
+                        if (skive.Skytter != null)
                         {
-                            // forventer nytt lag
+                            funnetSkive.Skytter = new Skytter(skive.Skytter);
+                            funnetSkive.SkytterGuid = skive.Skytter.Id;
+                        }
+                        funnetLag.SkiverILaget.Add(funnetSkive);
+                    }
+                    else
+                    {
+                        if (funnetSkive.Skytter != null)
+                        {
+                            if (skive.Skytter != null)
+                            {
+                                if (skive.Skytter.SkytterNr != funnetSkive.Skytter.SkytterNr)
+                                {
+                                    Log.Error("Funnet feil i skytter fra lag {0}, skive {1} fant={2} har={3}", res.LagNummer, skive.SkiveNummer, funnetSkive.Skytter.SkytterNr, skive.Skytter.SkytterNr);
+                                }
+                            }
                         }
                         else
                         {
-                            // forventer finne lag
-                        }
-
+                            if (skive.Skytter != null)
+                            {
+                                funnetSkive.Skytter = new Skytter(skive.Skytter);
+                                funnetSkive.SkytterGuid = skive.Skytter.Id;
+                            }
+                        }   
                     }
+
                 }
-                //if (res.Skytter == null)
-                //{
-                //    continue;
-                //}
-
-                //newres.Skytter = new Skytter(res.Skytter);
-                //newres.SkytterNr = res.Skytter.SkytterNr;
-                //// her må startholdet stå
-                //int serieNr = res.SkiveNr / m_AntallSkyttereILaget + 1;
-
-                //newres.SkiveNr = res.SkiveNr % m_AntallSkyttereILaget;
-                //if (newres.SkiveNr == 0)
-                //{
-                //    newres.SkiveNr = m_AntallSkyttereILaget;
-                //};
-
-                //var foundSkytter = resColl.FirstOrDefault(x => x.SkytterNr == res.SkytterNr);
-                //if (foundSkytter != null)
-                //{
-
-                //}
-                //else
-                //{
-                //    newres.Skytter = res.Skytter;
-                //    resColl.Add(newres);
-                //    foundSkytter = newres;
-                //}
-
-                //foreach (var ser in res.Serier)
-                //{
-
-                //    var nyserie = new Serie(ser);
-                //    nyserie.Nr = serieNr;
-                //    foundSkytter.Serier.Add(nyserie);
-                //}
             }
 
             return OrionLag;

@@ -66,6 +66,10 @@
                             if (cx == nameelements.Length - 1)
                             {
                                 this.EtterNavn = nameelements[cx];
+                                if (!string.IsNullOrEmpty(this.EtterNavn))
+                                {
+                                    this.EtterNavn = this.EtterNavn.Trim();
+                                }
                             }
                             else
                             {
@@ -76,6 +80,10 @@
                         }
 
                         this.Fornavn = tmpFornavn;
+                        if (!string.IsNullOrEmpty(this.Fornavn))
+                        {
+                            this.Fornavn = this.Fornavn.Trim();
+                        }
                     }
                     else
                     {

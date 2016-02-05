@@ -16,6 +16,7 @@ namespace OrionLag.Input.ViewModel
 
     using OrionLag.Common.DataModel;
     using OrionLag.Common.Services;
+    using OrionLag.Server.Engine;
     using OrionLag.Server.Services;
     using OrionLag.WpfBase;
 
@@ -24,6 +25,8 @@ namespace OrionLag.Input.ViewModel
         private IExportLeonFormatService m_exportService;
         private ILagOppsettDataService m_databaseService;
         private List<Lag> lagOppsett;
+        ConvertOrionLeon m_conv = new ConvertOrionLeon();
+
         public LagOppsettViewModel(ILagOppsettDataService oppsetService, List<Lag> lagOppsett,int minutes,DateTime startTime)
         {
             m_databaseService = oppsetService;
@@ -31,6 +34,7 @@ namespace OrionLag.Input.ViewModel
             LagStart = startTime.ToString("HH:mm");
             LagDuration = minutes.ToString();
             InitGrid(lagOppsett);
+           
         }
 
         private void InitGrid(List<Lag> lagInput)
@@ -76,6 +80,7 @@ namespace OrionLag.Input.ViewModel
         {
             var config = m_databaseService.GetOppsettConfig();
             this.m_filePath = config.PathFinfelt;
+            m_conv.InitConverter();
         }
 
         private void SortGrid()
@@ -298,8 +303,8 @@ namespace OrionLag.Input.ViewModel
         {
             m_exportService = new ExportLeonFormatService();
             var readlag = m_databaseService.GetAllFromDatabase(this.m_filePath);
-
-            m_exportService.GenerateLeonFormat(readlag.ToList());
+            var leonLag = m_conv.ConvertToLeonLag(readlag.ToList());
+            m_exportService.GenerateLeonFormat(leonLag.ToList());
         }
     }
 }
