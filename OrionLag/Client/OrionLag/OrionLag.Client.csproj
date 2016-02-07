@@ -76,6 +76,11 @@
       <DependentUpon>TargetOutputControlView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Result\ViewModel\ResultRowViewModel.cs" />
+    <Compile Include="Result\ViewModel\ResultViewModel.cs" />
+    <Compile Include="Result\Views\ResultView.xaml.cs">
+      <DependentUpon>ResultView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WpfBase\ChangeTracker.cs" />
     <Compile Include="WpfBase\TargetWindowBase.cs" />
     <Compile Include="WPF\FileSelector.xaml.cs">
@@ -106,6 +111,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Output\Views\TargetOutputControlView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Result\Views\ResultView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -151,6 +160,7 @@
       <Name>OrionLag.Server</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

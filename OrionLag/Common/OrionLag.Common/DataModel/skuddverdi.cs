@@ -13,6 +13,12 @@
         {
             return 0;
         }
+
+        public virtual int InnerSum()
+        {
+            return 0;
+        }
+
         public virtual string ToValue()
         {
             return "E";

@@ -2,6 +2,8 @@
 {
     using System;
 
+    using OrionLag.Common.Diagnosis;
+
     public class Skytter
     {
         public Skytter()
@@ -10,12 +12,19 @@
         }
         public Skytter(Skytter copy)
         {
+            if (copy == null)
+            {
+                Log.Error("Copy Skytter is null ");
+            }
+
             this.SkytterNr = copy.SkytterNr;
             this.Name = copy.Name;
             this.Skytterlag = copy.Skytterlag;
             this.Klasse = copy.Klasse;
             this.Id = copy.Id;
             this.SkytterlagNr = copy.SkytterlagNr;
+            this.TotalSum = copy.TotalSum;
+            this.TotalFeltSum = copy.TotalFeltSum;
         }
 
         public Skytter(string skytterNr, string name, int orionId, string skytterlag, int SkytterlagNr, string klasse)
@@ -101,5 +110,6 @@
 
         public string Klasse { get; set; }
         public int TotalSum { get; set; }
+        public int TotalFeltSum { get; set; }
     }
 }

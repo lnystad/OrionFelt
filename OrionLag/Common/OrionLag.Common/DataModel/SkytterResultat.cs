@@ -20,6 +20,8 @@
         
         public int OrionHoldId { get; set; }
 
+        public int OrionTotalSum { get; set; }
+
         public int LagNummer { get; set; }
 
         public int SkiveNr { get; set; }
@@ -32,6 +34,17 @@
             foreach (var serie in Serier)
             {
                 tot += serie.TotalSum();
+            }
+
+            return tot;
+        }
+
+        public int TotalFeltSum()
+        {
+            int tot = 0;
+            foreach (var serie in Serier)
+            {
+                tot += serie.FeltSum();
             }
 
             return tot;

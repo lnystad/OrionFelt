@@ -65,8 +65,11 @@
     <Compile Include="Configuration\IConfigurationFileReader.cs" />
     <Compile Include="DataModel\BaneVerdi.cs" />
     <Compile Include="DataModel\FeltVerdi.cs" />
+    <Compile Include="DataModel\HoldDefinition.cs" />
+    <Compile Include="DataModel\HoldType.cs" />
     <Compile Include="DataModel\InputData.cs" />
     <Compile Include="DataModel\Lag.cs" />
+    <Compile Include="DataModel\LagDefinition.cs" />
     <Compile Include="DataModel\SkytterResultat.cs" />
     <Compile Include="DataModel\Resultat.cs" />
     <Compile Include="DataModel\Serie.cs" />
@@ -99,6 +102,7 @@
     <Compile Include="Services\ILagGenerator.cs" />
     <Compile Include="Services\ILagOppsettDataService.cs" />
     <Compile Include="Services\IOppropDataService.cs" />
+    <Compile Include="Services\IResultDataService.cs" />
     <Compile Include="Services\LagGeneratorSpec.cs" />
     <Compile Include="Services\LagOppsettConfig.cs" />
     <Compile Include="Utils\InputFileParser.cs" />

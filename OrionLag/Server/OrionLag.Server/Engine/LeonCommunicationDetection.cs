@@ -93,10 +93,27 @@
             try
             {
                 this.m_newfileContent = new byte[] { 0x4B };
-                this.m_resultParser = new OrionResultParser();
+               
                 this.m_parser = new OrionInputParser();
                 this.m_comDirectory = ConfigurationLoader.GetAppSettingsValue("LeonInputDir");
 
+                var feltstevne = ConfigurationLoader.GetAppSettingsValue("SteveType");
+                if (!string.IsNullOrEmpty(feltstevne))
+                {
+                    if (feltstevne.ToUpper() == "BANE")
+                    {
+                        this.m_resultParser = new OrionResultParser(false);
+                    }
+                    else
+                    {
+                        this.m_resultParser = new OrionResultParser(true);
+                    }
+                }
+                else
+                {
+                    this.m_resultParser = new OrionResultParser(true);
+                }
+                
                 if (string.IsNullOrEmpty(this.m_comDirectory))
                 {
                     Log.Error("LeonInputDir Path must be specified");

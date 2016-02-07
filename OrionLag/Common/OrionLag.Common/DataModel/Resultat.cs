@@ -3,6 +3,8 @@
     using System;
     using System.Collections.Generic;
 
+    using OrionLag.Common.Diagnosis;
+
     public class Resultat
     {
         public Resultat()
@@ -42,7 +44,70 @@
             int tot = 0;
             foreach (var serie in Serier)
             {
-                tot += serie.TotalSum();
+                if (serie.Valid)
+                {
+                    tot += serie.TotalSum();
+                }
+                
+            }
+
+            return tot;
+        }
+        public int FeltSum(int serieNr)
+        {
+            int tot = 0;
+            foreach (var serie in Serier)
+            {
+                if (serie.Valid && serie.Nr == serieNr)
+                {
+                    tot += serie.FeltSum();
+                }
+
+            }
+
+            return tot;
+        }
+
+        public int FeltInnerSum(int serieNr)
+        {
+            int tot = 0;
+            foreach (var serie in Serier)
+            {
+                if (serie.Valid && serie.Nr == serieNr)
+                {
+                    tot += serie.FeltInnerSum();
+                }
+
+            }
+
+            return tot;
+        }
+
+        public int FeltSum()
+        {
+            int tot = 0;
+            foreach (var serie in Serier)
+            {
+                if (serie.Valid)
+                {
+                    tot += serie.FeltSum();
+                }
+
+            }
+
+            return tot;
+        }
+
+        public int FeltInnerSum()
+        {
+            int tot = 0;
+            foreach (var serie in Serier)
+            {
+                if (serie.Valid)
+                {
+                    tot += serie.FeltInnerSum();
+                }
+
             }
 
             return tot;
@@ -50,8 +115,17 @@
 
         public void Update(SkytterResultat resultat)
         {
+
             foreach (var ser in resultat.Serier)
             {
+                var foundSerie = this.Serier.Find(x => x.Nr == ser.Nr && x.Valid);
+                if (foundSerie!=null)
+                {
+                    Log.Warning("Fant tidligere Serie {0} {1} Skytternr={1}", foundSerie.Nr, foundSerie.ValidTime, SkytterNr);
+                    foundSerie.Valid = false;
+                }
+                ser.Valid = true;
+                ser.ValidTime=DateTime.Now;
                 this.Serier.Add(new Serie(ser));
             }
         }

@@ -20,7 +20,7 @@ namespace TestOrionLag.Unit
     {
         private OrionTestHelper m_testHelper;
         private ConvertOrionLeon m_convert ;
-        private OrionResultParser m_orionResultparser = new OrionResultParser();
+        private OrionResultParser m_orionResultparser = new OrionResultParser(true);
         public ConvertOrionLeonTests()
         {
 
@@ -68,6 +68,19 @@ namespace TestOrionLag.Unit
             XmlDocument doc = new XmlDocument();
             doc.Load(memoryStream);
 
+        }
+
+
+        [TestMethod]
+        public void ConvertLagNr()
+        {
+            int i = 1;
+            while (i < 38)
+            {
+                List<int> leon = m_convert.GetLeonLagNumber(i);
+                i++;
+            }
+            
         }
 
         private List<Lag> ReadAllOrionData(OrionTestHelper mTestHelper)

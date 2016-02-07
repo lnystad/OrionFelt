@@ -24,6 +24,8 @@ namespace OrionLag
     using OrionLag.Input.Views;
     using OrionLag.Output.ViewModels;
     using OrionLag.Output.Views;
+    using OrionLag.Result.ViewModel;
+    using OrionLag.Result.Views;
     using OrionLag.Server.Services;
     using OrionLag.ViewModel;
 
@@ -90,5 +92,13 @@ namespace OrionLag
         {
           
         }
+        private void InputMenuItemResultsFinFeltOpen_Click(object sender, RoutedEventArgs e)
+        {
+            ResultViewModel model = new ResultViewModel(new ResultDataService());
+            OpenWindow(new ResultView(model), "Resultater");
+
+        }
+
+        
     }
 }

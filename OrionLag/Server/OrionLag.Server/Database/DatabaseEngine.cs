@@ -20,6 +20,10 @@
 
         private List<Resultat> m_Resultater;
 
+        private List<LagDefinition> m_LagDefinitionList;
+
+        private XmlSerializer m_serLagDef = new XmlSerializer(typeof(List<LagDefinition>));
+
         private XmlSerializer m_serLag = new XmlSerializer(typeof(List<Lag>));
 
         private XmlSerializer m_serResultat = new XmlSerializer(typeof(List<Resultat>));
@@ -44,6 +48,7 @@
             this.m_LagList = new List<Lag>();
             this.m_Skyttere = new List<Skytter>();
             this.m_Resultater = new List<Resultat>();
+            this.m_LagDefinitionList = new List<LagDefinition>();
             this.IniDatabase();
         }
 
@@ -143,7 +148,33 @@
 
                 foreach (var resultat in inputFomOrion)
                 {
+                    if (string.IsNullOrEmpty(resultat.SkytterNr))
+                    {
+                        Log.Error("ResultFile with skytter no Number {0}", resultat.LagNummer, resultat.SkiveNr);
+                        continue;
+                    }
+
+                    if (resultat.Skytter==null)
+                    {
+                        Log.Error("ResultFile with empty skytter no Number {0}", resultat.LagNummer, resultat.SkiveNr);
+                        continue;
+                    }
+
+
+
                     var foundSkytterRes = this.m_Resultater.Find(x => x.SkytterNr == resultat.SkytterNr);
+
+                    var foundSkytter= this.m_Skyttere.Find(x => x.SkytterNr == resultat.SkytterNr);
+                    if (foundSkytter != null)
+                    {
+                        resultat.SkytterId = foundSkytter.Id;
+                    }
+                    else
+                    {
+                        this.m_Skyttere.Add(new Skytter(resultat.Skytter));
+                    }
+
+
                     if (foundSkytterRes != null)
                     {
                         flush = true;
@@ -155,6 +186,8 @@
                         foundSkytterRes = new Resultat(resultat.SkytterNr, resultat.SkytterId, resultat.Serier);
                         this.m_Resultater.Add(foundSkytterRes);
                     }
+
+                    resultat.OrionTotalSum = foundSkytterRes.TotalSum();
                 }
 
                 if (flush)
@@ -236,7 +269,11 @@
                 foreach (var file in allfilesToBackup)
                 {
                     var filenameonly = Path.GetFileName(file);
-                    File.Move(file, Path.Combine(backupdir, filenameonly));
+                    if (filenameonly.ToUpper() != "LAGDEF.XML")
+                    {
+                        File.Move(file, Path.Combine(backupdir, filenameonly));
+                    }
+                    
                 }
             }
             catch (Exception e)
@@ -280,6 +317,17 @@
                     using (StreamReader mread = new StreamReader(stream, new UTF8Encoding(false), true))
                     {
                         this.m_Resultater = this.m_serResultat.Deserialize(mread) as List<Resultat>;
+                    }
+                }
+
+                currentFile = Path.Combine(m_DatabaseDir, "LagDef.xml");
+                if (File.Exists(currentFile))
+                {
+                    MemoryStream stream = ReadStream(currentFile);
+
+                    using (StreamReader mread = new StreamReader(stream, new UTF8Encoding(false), true))
+                    {
+                        this.m_LagDefinitionList = this.m_serLagDef.Deserialize(mread) as List<LagDefinition>;
                     }
                 }
             }
@@ -378,7 +426,29 @@
 
         private Lag InsertNewTeam(Lag inputel)
         {
+            if (inputel == null)
+            {
+                return null;
+            }
+
             var insert = new Lag(inputel);
+            foreach (var skive in insert.SkiverILaget)
+            {
+                if (skive.Skytter != null)
+                {
+                    var foundSkytter = m_Skyttere.Find(y => y.SkytterNr == skive.Skytter.SkytterNr);
+                    if (foundSkytter != null)
+                    {
+                        skive.Skytter.Id = foundSkytter.Id;
+                        skive.SkytterGuid = foundSkytter.Id;
+                    }
+                    else
+                    {
+                        m_Skyttere.Add(skive.Skytter);
+                    }
+                }
+            }
+
             m_LagList.Add(insert);
             return insert;
         }
@@ -391,6 +461,21 @@
             foundTeam.SkiverILaget.Clear();
             foreach (var skive in inputlag.SkiverILaget)
             {
+
+                if (skive.Skytter != null)
+                {
+                    var foundSkytter = m_Skyttere.Find(y => y.SkytterNr == skive.Skytter.SkytterNr);
+                    if (foundSkytter != null)
+                    {
+                        skive.Skytter.Id = foundSkytter.Id;
+                        skive.SkytterGuid = foundSkytter.Id;
+                    }
+                    else
+                    {
+                        m_Skyttere.Add(skive.Skytter);
+                    }
+                }
+
                 var newSKive = new Skiver(skive);
 
                 foundTeam.SkiverILaget.Add(newSKive);
@@ -399,19 +484,113 @@
             return foundTeam;
         }
 
-        public List<Lag> GetOrionLagWithSum(List<Lag> updatedLagList)
+        public Lag GetLeonLagWithSum(int lag)
         {
-            List<Lag> retColl = new List<Lag>();
-            if (updatedLagList == null)
+            var funnetLag = m_LagList.Find(x => x.LagNummer == lag);
+            Lag nyttLag = null;
+            if (funnetLag != null)
             {
-                return retColl;
-            }
+                nyttLag = new Lag(funnetLag);
 
-            foreach (var lag in updatedLagList)
-            {
+                foreach (var lagskive in funnetLag.SkiverILaget)
+                {
+                    var nyskive = nyttLag.SkiverILaget.Find(x => x.SkiveNummer == lagskive.SkiveNummer);
+                    if (nyskive == null)
+                    {
+                        continue;
+                    }
+
+                    if (lagskive.SkytterGuid != null)
+                    {
+                        var skytter=m_Skyttere.Find(y => y.Id == lagskive.SkytterGuid);
+                        if (skytter == null)
+                        {
+                            continue;
+                        }
+
+                        nyskive.Skytter = new Skytter(skytter);
+                        nyskive.SkytterGuid = skytter.Id;
+                        nyskive.Skytter.TotalSum = 0;
+                        var res = m_Resultater.Find(z => z.SkytterId == lagskive.SkytterGuid);
+                        if (res != null)
+                        {
+                            nyskive.Skytter.TotalSum = res.TotalSum();
+                            nyskive.Skytter.TotalFeltSum = res.FeltSum();
+                        }
+                    }
+                }
                 
+
+
             }
 
+
+            return nyttLag;
+        }
+
+        public List<Lag> GetLag()
+        {
+            List<Lag> lagRes= new List<Lag>();
+            try
+            {
+                IniDatabase();
+
+                foreach (var lag in m_LagList)
+                {
+                    var lagdef=m_LagDefinitionList.Find(x => x.LagNummer == lag.LagNummer);
+                    Lag cpy = new Lag(lag);
+                    if (lagdef != null)
+                    {
+                        cpy.LagTid = lagdef.LagTid;
+                    }
+
+                    foreach (var skive in lag.SkiverILaget)
+                    {
+                        if (skive.SkytterGuid != null)
+                        {
+                            var skytt = m_Skyttere.Find(y => y.Id == skive.SkytterGuid);
+                            if (skytt != null)
+                            {
+                                var skiveFunnet = cpy.SkiverILaget.Find(ak => ak.SkiveNummer == skive.SkiveNummer);
+                                if (skiveFunnet != null)
+                                {
+                                    skiveFunnet.Skytter = new Skytter(skytt);
+                                    skiveFunnet.SkytterGuid = skytt.Id;
+                                    skiveFunnet.Skytter.Id= skytt.Id;
+                                }
+                            }
+                        }
+                    }
+
+
+                    lagRes.Add(cpy);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "GetLag");
+            }
+
+            return lagRes;
+        }
+
+        public List<Resultat> GetResultsForSkytter(Guid skytterId)
+        {
+            List<Resultat> retColl= new List<Resultat>();
+            try
+            {
+                IniDatabase();
+
+                var foundRes=m_Resultater.Find(res => res.SkytterId == skytterId);
+                if (foundRes != null)
+                {
+                    retColl.Add(foundRes);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "GetLag");
+            }
 
             return retColl;
         }

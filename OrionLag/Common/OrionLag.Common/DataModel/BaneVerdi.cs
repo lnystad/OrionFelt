@@ -8,6 +8,20 @@
         public int? Verdi;
         public int? DecimalVerdi;
 
+
+        public override int InnerSum()
+        {
+            if (InnerTier.HasValue)
+            {
+                if(InnerTier.Value) 
+                {
+                    return 1;
+                }
+            }
+
+            return 0;
+        }
+
         public override int Sum()
         {
             if (Verdi.HasValue)

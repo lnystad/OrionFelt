@@ -238,6 +238,7 @@ namespace OrionLag.Server.Parsers
                     string skytterlag = string.Empty;
                     string klasse = string.Empty;
                     string totalsum = string.Empty;
+                    string totalFeltsum = string.Empty;
                     string skytterNr = string.Empty;
                     skiveNr = skive.SkiveNummer.ToString();
                     if (skive.Skytter != null)
@@ -246,6 +247,7 @@ namespace OrionLag.Server.Parsers
                         skytterlag = skive.Skytter.Skytterlag;
                         klasse = skive.Skytter.Klasse;
                         totalsum = skive.Skytter.TotalSum.ToString();
+                        totalFeltsum = skive.Skytter.TotalFeltSum.ToString();
                         skytterNr = skive.Skytter.SkytterNr.ToString();
                     }
 
@@ -257,7 +259,7 @@ namespace OrionLag.Server.Parsers
                         Navn,
                         skytterlag,
                         klasse,
-                        totalsum,
+                        totalFeltsum,
                         skytterNr);
                     retColl.Add(line);
                 }

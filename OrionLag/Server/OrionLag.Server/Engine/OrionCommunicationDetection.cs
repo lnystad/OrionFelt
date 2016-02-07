@@ -31,7 +31,7 @@ namespace OrionLag.Server.Engine
 
         OrionInputParser m_parser = new OrionInputParser();
 
-        OrionResultParser m_resultparser = new OrionResultParser();
+        OrionResultParser m_resultparser;
 
         public List<Lag> CheckComfiles()
         {
@@ -42,6 +42,22 @@ namespace OrionLag.Server.Engine
         public void Init()
         {
             m_newfileContent = new byte[] { 0x4B };
+            var feltstevne = ConfigurationLoader.GetAppSettingsValue("SteveType");
+            if (!string.IsNullOrEmpty(feltstevne))
+            {
+                if (feltstevne.ToUpper() == "BANE")
+                {
+                    this.m_resultparser = new OrionResultParser(false);
+                }
+                else
+                {
+                    this.m_resultparser = new OrionResultParser(false);
+                }
+            }
+            else
+            {
+                this.m_resultparser = new OrionResultParser(false);
+            }
 
             this.m_orionOutputPath = ConfigurationLoader.GetAppSettingsValue("OrionInputDir");
 

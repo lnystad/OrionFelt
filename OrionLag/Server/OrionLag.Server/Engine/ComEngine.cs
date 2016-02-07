@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OrionLag.Server.Engine
+﻿namespace OrionLag.Server.Engine
 {
+    using System;
+    using System.Collections.Generic;
     using System.Configuration;
-    using System.IO;
+    using System.Linq;
     using System.Threading;
-    using System.Windows.Media;
 
     using OrionLag.Common.DataModel;
     using OrionLag.Common.Diagnosis;
@@ -17,15 +12,20 @@ namespace OrionLag.Server.Engine
 
     public class ComEngine
     {
-        private bool m_stopMe;
-        public int ExitCode { get; set; }
+        private ConvertOrionLeon m_convertLeonToOrion;
+
+        private DatabaseEngine m_DatabaseEngine;
 
         private LeonCommunicationDetection m_leonCommDetection;
 
         private OrionCommunicationDetection m_OrionCommDetection;
-        private DatabaseEngine m_DatabaseEngine;
 
-        private ConvertOrionLeon m_convertLeonToOrion;
+        private bool m_sendResultToLeon;
+
+        private bool m_stopMe;
+
+        public int ExitCode { get; set; }
+
         public void Start()
         {
             try
@@ -34,10 +34,10 @@ namespace OrionLag.Server.Engine
                 Log.Info("Starting");
                 while (!this.m_stopMe)
                 {
-                    List<Lag> inputFomLeon= null;
+                    List<Lag> inputFomLeon = null;
                     bool initCom = false;
                     // Her sjekkes oppropslister fra Leon
-                    if(this.m_leonCommDetection.CheckComfiles(out inputFomLeon,out initCom))
+                    if (this.m_leonCommDetection.CheckComfiles(out inputFomLeon, out initCom))
                     {
                         if (this.m_DatabaseEngine.UpdateDataBaseFromLeon(inputFomLeon, initCom))
                         {
@@ -66,22 +66,22 @@ namespace OrionLag.Server.Engine
                     if (this.m_OrionCommDetection.CheckComfiles(out inputFomOrion, out allresultsComm))
                     {
                         var leonResults = this.m_convertLeonToOrion.ConvertToLeonLag(inputFomOrion);
-                        
+
                         if (this.m_DatabaseEngine.UpdateDataBaseFromOrion(leonResults, allresultsComm))
                         {
-                            Log.Info("FileDetected starting updating Leon");
-
-                            while (!this.m_leonCommDetection.SendToLeon(leonResults, allresultsComm))
+                            if (this.m_sendResultToLeon)
                             {
-                                Thread.Sleep(1000);
-                                if (this.m_stopMe)
+                                Log.Info("FileDetected starting updating Leon");
+
+                                while (!this.m_leonCommDetection.SendToLeon(leonResults, allresultsComm))
                                 {
-                                    break;
+                                    Thread.Sleep(1000);
+                                    if (this.m_stopMe)
+                                    {
+                                        break;
+                                    }
                                 }
                             }
-
-
-
                         }
                         else
                         {
@@ -104,8 +104,6 @@ namespace OrionLag.Server.Engine
                         }
                     }
 
-
-
                     Thread.Sleep(2000);
                 }
 
@@ -122,69 +120,63 @@ namespace OrionLag.Server.Engine
 
         private List<Lag> GetUpdatedLag(List<SkytterResultat> inputFomOrion, bool allresultsComm)
         {
-            Lag retLag = null;
-
             if (inputFomOrion == null && !allresultsComm)
             {
                 return null;
             }
 
+            List<int> lagNo = new List<int>();
+
             foreach (var result in inputFomOrion)
             {
-                int LagNo = result.LagNummer + 1;
-                if (retLag == null)
+                var nesteLag = result.LagNummer + 1;
+                if (!lagNo.Any(x => x == nesteLag))
                 {
-                    retLag = new Lag(LagNo, result.OrionHoldId, 0);
+                    lagNo.Add(nesteLag);
                 }
-                else
+            }
+
+            List<Lag> leonLagList = new List<Lag>();
+
+            foreach (var lag in lagNo)
+            {
+                var leonLagno = m_convertLeonToOrion.GetLeonLagNumber(lag);
+
+                foreach (var leonLag in leonLagno)
                 {
-                    if (LagNo != retLag.LagNummer)
+                    var updatedLag = m_DatabaseEngine.GetLeonLagWithSum(leonLag);
+
+                    if (updatedLag != null)
                     {
-                        Log.Error(" Feil i lagnummer ved oppdatering av totresultat {0} forvantet={1}", LagNo, retLag.LagNummer);
-                        continue;
+                        leonLagList.Add(updatedLag);
                     }
                 }
+            }
 
-
-                if (result.Skytter != null)
+            var OrionLag = m_convertLeonToOrion.ConvertToOrionLag(leonLagList);
+            List<Lag> selectedOrionLag = new List<Lag>();
+            foreach (var lag in lagNo)
+            {
+                var found = OrionLag.Find(x => x.LagNummer == lag);
+                if (found != null)
                 {
-                    //var skive = new Skiver();
-                    //skive.Skytter = result.Skytter;
-                    //foreach (var skive in retLag.SkiverILaget)
-                    //{
-                    //    if (skive.Skytter != null)
-                    //    {
-                    //        if(skive.Skytter)
-                    //    }
-                    //}
+                    selectedOrionLag.Add(found);
                 }
             }
-            if (retLag != null)
-            {
-                var input = new List<Lag>() { retLag };
-                var LeonLag = m_convertLeonToOrion.ConvertToLeonLag(input);
-                var updatedLag = m_DatabaseEngine.GetOrionLagWithSum(LeonLag);
-                var OrionLag = m_convertLeonToOrion.ConvertToOrionLag(updatedLag);
-                return OrionLag;
-            }
 
-
-            return null;
-
+            return selectedOrionLag;
         }
 
         /// <summary>
-        /// The stop.
+        ///     The stop.
         /// </summary>
         public void Stop()
         {
             this.m_stopMe = true;
         }
 
-
-
         /// <summary>
-        /// The init application.
+        ///     The init application.
         /// </summary>
         private void InitApplication()
         {
@@ -204,10 +196,24 @@ namespace OrionLag.Server.Engine
                 }
             }
 
+            var resultToLeon = ConfigurationManager.AppSettings["SendResultToLeon"];
+            if (!string.IsNullOrEmpty(resultToLeon))
+            {
+                bool res = false;
+                if (bool.TryParse(resultToLeon, out res))
+                {
+                    this.m_sendResultToLeon = res;
+                }
+            }
+            else
+            {
+                this.m_sendResultToLeon = false;
+            }
+
             var fileAppsender = new FileAppender(logfile, enumLowestTrace, LoggingLevels.Trace);
             Log.AddAppender(fileAppsender);
             Log.Info("Starting Config");
-            
+
             this.m_OrionCommDetection = new OrionCommunicationDetection();
             this.m_OrionCommDetection.Init();
             this.m_leonCommDetection = new LeonCommunicationDetection();

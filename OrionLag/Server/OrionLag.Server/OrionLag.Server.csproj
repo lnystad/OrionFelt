@@ -81,6 +81,7 @@
     <Compile Include="Services\InputPatitionersService.cs" />
     <Compile Include="Services\LagOppsettDataService.cs" />
     <Compile Include="Services\OppropDataService.cs" />
+    <Compile Include="Services\ResultDataService.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

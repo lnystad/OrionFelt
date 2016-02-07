@@ -18,6 +18,10 @@
                 this.Skytter = new Skytter(copy.Skytter);
                 this.SkytterGuid = copy.Skytter.Id;
             }
+            else
+            {
+                this.SkytterGuid = null;
+            }
         }
 
         public Skiver(int skiveteller)

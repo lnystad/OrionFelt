@@ -29,8 +29,15 @@ namespace OrionLag.Server.Parsers
 
         private const int serieStartIndex = 8;
 
-        SkuddVerdiParser m_skuddParser = new SkuddVerdiParser();
+        SkuddVerdiParser m_skuddParser;
 
+        private bool m_feltResultater;
+
+        public OrionResultParser(bool feltResultater)
+        {
+            m_feltResultater = feltResultater;
+            m_skuddParser = new SkuddVerdiParser(feltResultater);
+        }
 
         public List<SkytterResultat> ParseOrionResultOutputFormat(string[] inputLines)
         {
@@ -229,9 +236,15 @@ namespace OrionLag.Server.Parsers
                 }
                 var sortedserie = rs.Serier.OrderBy(x => x.Nr).ToList();
                 int total = 0;
+                int felttotal = 0;
                 foreach (var ser in sortedserie)
                 {
                     total = total + ser.TotalSum();
+                }
+
+                foreach (var ser in sortedserie)
+                {
+                    total = total + ser.FeltSum();
                 }
 
                 string line = string.Format(
@@ -243,7 +256,7 @@ namespace OrionLag.Server.Parsers
                        rs.Skytter.Name,
                        rs.Skytter.Skytterlag,
                        rs.Skytter.Klasse,
-                       total);
+                       felttotal);
 
                 int count = 0;
                 foreach (var ser in rs.Serier)

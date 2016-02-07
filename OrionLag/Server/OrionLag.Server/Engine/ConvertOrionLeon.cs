@@ -7,17 +7,22 @@ using OrionLag.Common.DataModel;
 
 namespace OrionLag.Server.Engine
 {
+    using System.Windows;
+
     using OrionLag.Common.Configuration;
     using OrionLag.Common.Diagnosis;
+    using OrionLag.Server.Parsers;
 
     public class ConvertOrionLeon
     {
+       
+
         private int m_AntallHold;
         private int m_AntallSkiver;
 
         private bool m_Avbrekk;
         private int m_AntallSkyttereILaget;
-
+        private SkuddVerdiParser m_SkuddVerdiParser = new SkuddVerdiParser(true);
         public int AntallHold
         {
             get
@@ -27,6 +32,20 @@ namespace OrionLag.Server.Engine
             set
             {
                 m_AntallHold = value;
+            }
+        }
+
+        public List<HoldDefinition> m_definition;
+
+        public List<HoldDefinition> Definition
+        {
+            get
+            {
+                return m_definition;
+            }
+            set
+            {
+                m_definition = value;
             }
         }
 
@@ -79,6 +98,19 @@ namespace OrionLag.Server.Engine
             try
             {
                 m_AntallHold = Intvalue("AntallHold");
+               
+                var holdType = ConfigurationLoader.GetAppSettingsValue("HoldType");
+                if (string.IsNullOrEmpty(holdType))
+                {
+                    m_definition = new List<HoldDefinition>();
+                    m_definition.Add(new HoldDefinition(1,HoldType.BaneHold));
+                    m_definition.Add(new HoldDefinition(2, HoldType.FeltHold));
+                    m_definition.Add(new HoldDefinition(3, HoldType.FeltHold));
+                    m_definition.Add(new HoldDefinition(4, HoldType.FeltHold));
+                    m_definition.Add(new HoldDefinition(5, HoldType.FeltHold));
+                    m_definition.Add(new HoldDefinition(6, HoldType.FeltHold));
+                }
+
                 m_OrionHoldId = Intvalue("OrionHoldId");
 
                 m_AntallSkiver = Intvalue("AntallSkiver");
@@ -221,21 +253,6 @@ namespace OrionLag.Server.Engine
             foreach (var leonLag in inputFomLeon)
             {
                 int orionHoldId = leonLag.OrionHoldId;
-                //var orionLagnr = leonLag.LagNummer % (this.m_AntallSkiver / this.m_AntallSkyttereILaget);
-                //var foundOrionLag = OrionLag.FirstOrDefault(x => x.LagNummer == orionLagnr);
-
-                //if (foundOrionLag == null)
-                //{
-                //    foundOrionLag = new Lag();
-                //    foundOrionLag.LagNummer = orionLagnr;
-                //    foundOrionLag.OrionHoldId = leonLag.OrionHoldId;
-                //    OrionLag.Add(foundOrionLag);
-                //}
-
-                //var skytterNr = foundOrionLag.LagNummer * this.m_AntallSkyttereILaget;
-
-                //var tmp = foundOrionLag.LagNummer % this.m_AntallHold;
-                //var tmp2 = skytterNr % this.m_AntallHold;
                 foreach (var skive in leonLag.SkiverILaget)
                 {
                     var skivenr = skive.SkiveNummer - 1;
@@ -252,7 +269,11 @@ namespace OrionLag.Server.Engine
                         int SkiveNr = (hold * m_AntallSkyttereILaget) + skive.SkiveNummer;
                         //SkiveNr = SkiveNr+ skive.SkiveNummer -1;
                         var newSkive = lag.GetSkiveNr(SkiveNr);
-                        newSkive.Skytter = new Skytter(skive.Skytter);
+                        if (skive.Skytter != null)
+                        {
+                            newSkive.Skytter = new Skytter(skive.Skytter);
+                        }
+                        
                         hold++;
                         Log.Info("Convert from {0} {1} to {2} {3}", leonLag.LagNummer, skive.SkiveNummer, lag.LagNummer, SkiveNr);
                     }
@@ -283,7 +304,17 @@ namespace OrionLag.Server.Engine
                 newres.Skytter = new Skytter(res.Skytter);
                 newres.SkytterNr = res.Skytter.SkytterNr;
                 // her må startholdet stå
-                int serieNr = res.SkiveNr / m_AntallSkyttereILaget +1;
+
+                int serieNr = 0;
+                if (res.SkiveNr <= m_AntallSkyttereILaget)
+                {
+                    serieNr = 1;
+                }
+                else
+                {
+                    serieNr = res.SkiveNr / m_AntallSkyttereILaget;
+                    serieNr = serieNr + 1;
+                }
 
                 newres.SkiveNr = res.SkiveNr % m_AntallSkyttereILaget;
                 if(newres.SkiveNr == 0)
@@ -305,9 +336,27 @@ namespace OrionLag.Server.Engine
 
                 foreach(var ser in res.Serier)
                 {
-
                     var nyserie = new Serie(ser);
                     nyserie.Nr = serieNr;
+                    var definition = this.m_definition.Find(defno => defno.HoldNr == serieNr);
+                    if (definition != null)
+                    {
+                        if (definition.HoldType == HoldType.FeltHold)
+                        {
+                            var feltVerdier = new List<Skuddverdi>();
+                            foreach (var value in nyserie.Verdier)
+                            {
+                                if (value.GetType() == typeof(BaneVerdi))
+                                {
+                                    var felt=m_SkuddVerdiParser.ParseSkudd(value.ToValue());
+                                    feltVerdier.Add(felt);
+                                }
+                            }
+
+                            nyserie.Verdier = feltVerdier;
+                        }
+                    }
+
                     foundSkytter.Serier.Add(nyserie);
                 }
             }
@@ -325,6 +374,44 @@ namespace OrionLag.Server.Engine
             }
 
             return foudLag;
+        }
+
+        public List<int> GetLeonLagNumber(int lag)
+        {
+            List<int> retVal = new List<int>();
+            //int start = lag / m_AntallHold;
+            //int lag2 = (lag % m_AntallHold) ;
+            
+            //int StartLag=start *m_AntallHold;
+            ////if (start == 0)
+            ////{
+            ////    StartLag = 0;
+            ////}
+            ////else
+            ////{
+            ////    StartLag = start * m_AntallHold;
+            ////}
+
+            //int LeonLag = StartLag + lag2;
+
+            int i = 0;
+            while (i < m_AntallHold)
+            {
+                var nyttleonLagnr = lag - i;
+                if (nyttleonLagnr > 0)
+                {
+                    retVal.Add(nyttleonLagnr);
+                }
+                else
+                {
+                    break;
+                }
+
+                i++;
+            }
+
+
+            return retVal;
         }
     }
 }

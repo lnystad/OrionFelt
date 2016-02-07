@@ -19,6 +19,9 @@
                 <MenuItem Header="_FinFelt" Click="InputMenuItemFinFeltOpen_Click"/>
                 <MenuItem Header="_GrovFeltFelt" Click="InputMenuItemGrovFeltOpen_Click"/>
             </MenuItem>
+            <MenuItem Header="Results">
+                <MenuItem Header="_FinFelt" Click="InputMenuItemResultsFinFeltOpen_Click"/>
+            </MenuItem>
         </Menu>
         <StackPanel>
 
