@@ -10,6 +10,7 @@ namespace OrionLag.Common.Services
 
     public interface IResultDataService
     {
+        Lag GetLag(int lagNr);
         List<Lag> GetLag();
         List<Skytter> GetSkytter();
 

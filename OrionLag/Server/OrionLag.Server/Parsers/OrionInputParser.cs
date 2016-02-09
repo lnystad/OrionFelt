@@ -61,8 +61,23 @@ namespace OrionLag.Server.Parsers
 
                         var  currentSKytter = new Skytter();
                         currentSKytter.Name = elements[NavnIndex];
+                        if (!string.IsNullOrEmpty(currentSKytter.Name))
+                        {
+                            currentSKytter.Name = currentSKytter.Name.Trim();
+                        }
+
                         currentSKytter.Skytterlag = elements[skytterlagIndex];
+                        if (!string.IsNullOrEmpty(currentSKytter.Skytterlag))
+                        {
+                            currentSKytter.Skytterlag = currentSKytter.Skytterlag.Trim();
+                        }
+
                         currentSKytter.Klasse = elements[klasseIndex];
+                        if (!string.IsNullOrEmpty(currentSKytter.Klasse))
+                        {
+                            currentSKytter.Klasse = currentSKytter.Klasse.Trim();
+                        }
+
                         if (elements.Length > 6 && !string.IsNullOrEmpty(elements[totalsumIndex]))
                         {
                             currentSKytter.TotalSum = Convert.ToInt32(elements[totalsumIndex]);
@@ -71,8 +86,12 @@ namespace OrionLag.Server.Parsers
                         if (elements.Length > skytterNrIndex && !string.IsNullOrEmpty(elements[skytterNrIndex]))
                         {
                             currentSKytter.SkytterNr = elements[skytterNrIndex];
+                            if (!string.IsNullOrEmpty(currentSKytter.SkytterNr))
+                            {
+                                currentSKytter.SkytterNr = currentSKytter.SkytterNr.Trim();
+                            }
                         }
-                        if (!string.IsNullOrEmpty(currentSKytter.Name))
+                        if (!string.IsNullOrEmpty(currentSKytter.Name) && !string.IsNullOrEmpty(currentSKytter.SkytterNr))
                         {
                             Skive.Skytter = currentSKytter;
                         }

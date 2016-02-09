@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Project ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<!-- Select a Product Configuration -->
+		<InstallShieldProductConfiguration>Express</InstallShieldProductConfiguration>
+		<!-- Select a Visual Studio Configuration / InstallShield Release -->
+		<Configuration>Debug</Configuration>
+		<InstallShieldRelease>$(Configuration)</InstallShieldRelease>
+	</PropertyGroup>
+	<ItemGroup>
+		<!-- The InstallShieldProject item selects the project to build -->
+		<InstallShieldProject Include="$(MSBuildProjectDirectory)\$(MSBuildProjectName).isl"/>
+		<!-- The InstallShieldReleaseFlags sets Release Flags -->
+		<!--<InstallShieldReleaseFlags Include=""/>-->
+		<!-- The InstallShieldMergeModulePath specifies what directories are
+		searched for Merge Modules -->
+		<!--<InstallShieldMergeModulePath Include=""/>-->
+	</ItemGroup>
+	<ItemGroup>
+		<!-- The ProjectReference items refer to any Visual Studio solutions you want to automatically probe for Project Output Groups.  -->
+	</ItemGroup>
+	<ItemGroup>
+		<!-- The TaggedOutputs items allow you to explicitly add extra files to output groups. Each item must include both Name and OutputGroup, as well as TargetPath metadata values. -->
+		<!--<TaggedOutputs Include="C:\My Test Exe.exe">
+			<Name>My Test Project</Name>
+			<OutputGroup>Primary output</OutputGroup>
+			<TargetPath>My Test Exe.exe</TargetPath>
+		</TaggedOutputs> -->
+	</ItemGroup>
+	<Import Project="$(MSBuildExtensionsPath32)\InstallShield\2015Limited\InstallShield.targets"/>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Client\OrionLag\OrionLag.Client.csproj">
+			<Name>OrionLag.Client</Name>
+			<Project>{A65F6D7C-FA05-420C-8532-2FB6AA788C58}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\Common\OrionLag.Common\OrionLag.Common.csproj">
+			<Name>OrionLag.Common</Name>
+			<Project>{58505D8C-8899-4CB5-882B-99C19468EC48}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\Server\OrionLag.Server\OrionLag.Server.csproj">
+			<Name>OrionLag.Server</Name>
+			<Project>{46E32C6F-FA9E-4BAF-9CAF-3BA28823940D}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\Server\OrionLag.Service.Server\OrionLag.Service.Server.csproj">
+			<Name>OrionLag.Service.Server</Name>
+			<Project>{BBD36083-EA3A-4E89-8EB1-3ED9D89BDB0F}</Project>
+		</ProjectReference>
+	</ItemGroup>
+</Project>

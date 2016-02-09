@@ -49,9 +49,11 @@ namespace OrionLag.Result.ViewModel
                 return;
             }
 
+            var nyttLag = m_databaseService.GetLag(mSelectedLag.LagNummer);
+
             m_chosenLag = new ObservableCollection<ResultRowViewModel>();
 
-            foreach (var skive in mSelectedLag.SkiverILaget)
+            foreach (var skive in nyttLag.SkiverILaget)
             {
                 if (skive.SkytterGuid != null)
                 {

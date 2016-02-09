@@ -116,7 +116,7 @@ namespace OrionLag.Server.Engine
             if (lines.Length > 0)
             {
                 string contentFileName = Path.Combine(m_orionOutputPath, dataFile);
-                using (System.IO.StreamWriter file =  new System.IO.StreamWriter(contentFileName))
+                using (System.IO.StreamWriter file =  new System.IO.StreamWriter(contentFileName,false, new UTF8Encoding(false)))
                 {
                     int count = 0;
                     foreach (string line in lines)
@@ -186,7 +186,7 @@ namespace OrionLag.Server.Engine
                     {
 
                         commFound = true;
-                        var inputContent = File.ReadAllLines(filename, new UTF7Encoding());
+                        var inputContent = File.ReadAllLines(filename, new UTF8Encoding());
                         funnetLag = this.m_resultparser.ParseOrionResultOutputFormat(inputContent);
                         if(funnetLag.Count<=0)
                         {

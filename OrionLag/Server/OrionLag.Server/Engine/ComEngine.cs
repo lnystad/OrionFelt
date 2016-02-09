@@ -88,18 +88,20 @@
                             Log.Info("FileDetected no update");
                         }
                     }
-
-                    List<Lag> updatedLagList = GetUpdatedLag(inputFomOrion, allresultsComm);
-
-                    if (updatedLagList != null && updatedLagList.Count > 0)
+                    if (inputFomOrion != null && inputFomOrion.Count > 0)
                     {
-                        Log.Info("Sending Updated Lag to Orion");
-                        while (!this.m_OrionCommDetection.SendToOrion(updatedLagList))
+                        List<Lag> updatedLagList = GetUpdatedLag(inputFomOrion, allresultsComm);
+
+                        if (updatedLagList != null && updatedLagList.Count > 0)
                         {
-                            Thread.Sleep(1000);
-                            if (this.m_stopMe)
+                            Log.Info("Sending Updated Lag to Orion");
+                            while (!this.m_OrionCommDetection.SendToOrion(updatedLagList))
                             {
-                                break;
+                                Thread.Sleep(1000);
+                                if (this.m_stopMe)
+                                {
+                                    break;
+                                }
                             }
                         }
                     }
@@ -124,6 +126,7 @@
             {
                 return null;
             }
+
 
             List<int> lagNo = new List<int>();
 

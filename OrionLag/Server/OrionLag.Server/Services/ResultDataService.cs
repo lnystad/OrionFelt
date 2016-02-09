@@ -20,6 +20,11 @@ namespace OrionLag.Server.Services
             dbEngine.Init();
         }
 
+        public Lag GetLag(int lagNr)
+        {
+            return dbEngine.GetLag(lagNr);
+        }
+
         public List<Lag> GetLag()
         {
             return dbEngine.GetLag();

@@ -45,7 +45,18 @@
         {
             get
             {
-                return this.Fornavn + ' ' + this.EtterNavn;
+                var name = string.Empty;
+                if (!string.IsNullOrEmpty(this.Fornavn))
+                {
+                    name = this.Fornavn;
+                }
+
+                if (!string.IsNullOrEmpty(this.EtterNavn))
+                {
+                    name = name + ' ' + this.EtterNavn;
+                }
+
+                return name;
             }
             set
             {

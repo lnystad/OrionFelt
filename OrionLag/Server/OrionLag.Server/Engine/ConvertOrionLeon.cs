@@ -312,8 +312,12 @@ namespace OrionLag.Server.Engine
                 }
                 else
                 {
-                    serieNr = res.SkiveNr / m_AntallSkyttereILaget;
-                    serieNr = serieNr + 1;
+                    int test = res.SkiveNr % this.m_AntallSkyttereILaget;
+                    serieNr = res.SkiveNr / this.m_AntallSkyttereILaget;
+                    if (test != 0)
+                    {
+                        serieNr = serieNr + 1;
+                    }
                 }
 
                 newres.SkiveNr = res.SkiveNr % m_AntallSkyttereILaget;

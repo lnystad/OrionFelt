@@ -24,6 +24,8 @@
 
         private XmlSerializer m_serLagDef = new XmlSerializer(typeof(List<LagDefinition>));
 
+        
+
         private XmlSerializer m_serLag = new XmlSerializer(typeof(List<Lag>));
 
         private XmlSerializer m_serResultat = new XmlSerializer(typeof(List<Resultat>));
@@ -62,6 +64,7 @@
                 {
                     this.m_LagList.Clear();
                     this.m_Skyttere.Clear();
+                    this.m_Resultater.Clear();
                     if (inputFomLeon.Count > 0)
                     {
                         foreach (var inputel in inputFomLeon)
@@ -79,15 +82,6 @@
                                 flush = true;
                             }
 
-                            foreach (var skive in inputel.SkiverILaget)
-                            {
-                                if (UpdateSkytterByOrionId(skive.Skytter))
-                                {
-                                    flush = true;
-                                }
-
-                                UpdateSkytterTotalSum(skive.Skytter);
-                            }
                         }
 
                         if (flush)
@@ -109,10 +103,12 @@
                     if (foundTeam != null)
                     {
                         currentLag = UpdateTeam(foundTeam, inputel);
+                        flush = true;
                     }
                     else
                     {
                         currentLag = InsertNewTeam(inputel);
+                        flush = true;
                     }
 
                     foreach (var skive in inputel.SkiverILaget)
@@ -120,6 +116,12 @@
                         UpdateSkytterByOrionId(skive.Skytter);
                         UpdateSkytterTotalSum(skive.Skytter);
                     }
+
+                    if (flush)
+                    {
+                        FlushDatabase();
+                    }
+
                     return true;
                 }
 
@@ -366,6 +368,11 @@
 
         private void UpdateSkytterTotalSum(Skytter skytter)
         {
+            if (skytter == null)
+            {
+                return;
+            }
+
             var res = m_Resultater.FirstOrDefault(x => x.SkytterNr == skytter.SkytterNr);
             if (res != null)
             {
@@ -432,21 +439,47 @@
             }
 
             var insert = new Lag(inputel);
+            List<Skiver> feilvalidertSkive=new List<Skiver>();
             foreach (var skive in insert.SkiverILaget)
             {
+                if (skive.SkiveNummer <= 0)
+                {
+                    feilvalidertSkive.Add(skive);
+                    Log.Warning("Fant Lag med tomt skivenr ved insett av nytt lag lag={0}", insert.LagNummer);
+                    continue;
+                }
+                
                 if (skive.Skytter != null)
                 {
-                    var foundSkytter = m_Skyttere.Find(y => y.SkytterNr == skive.Skytter.SkytterNr);
-                    if (foundSkytter != null)
+                    if (skive.Skytter.SkytterNr == "0" && string.IsNullOrEmpty(skive.Skytter.Name))
                     {
-                        skive.Skytter.Id = foundSkytter.Id;
-                        skive.SkytterGuid = foundSkytter.Id;
+                        skive.Free = true;
+                        skive.Skytter = null;
+                        skive.SkytterGuid = null;
                     }
                     else
                     {
-                        m_Skyttere.Add(skive.Skytter);
+                        var foundSkytter = m_Skyttere.Find(y => y.SkytterNr == skive.Skytter.SkytterNr);
+                        if (foundSkytter != null)
+                        {
+                            UpdateSkytter(foundSkytter, skive.Skytter);
+                            skive.Skytter = null;
+                            skive.SkytterGuid = foundSkytter.Id;
+                        }
+                        else
+                        {
+                            m_Skyttere.Add(skive.Skytter);
+                            skive.SkytterGuid = skive.Skytter.Id;
+                            skive.Skytter = null;
+                            
+                        }
                     }
                 }
+            }
+
+            foreach (var delSKive in feilvalidertSkive)
+            {
+                insert.SkiverILaget.Remove(delSKive);
             }
 
             m_LagList.Add(insert);
@@ -458,30 +491,85 @@
             foundTeam.LagTid = inputlag.LagTid;
             foundTeam.MaxSkiveNummer = inputlag.MaxSkiveNummer;
             foundTeam.OrionHoldId = inputlag.OrionHoldId;
-            foundTeam.SkiverILaget.Clear();
             foreach (var skive in inputlag.SkiverILaget)
             {
+                if (skive.SkiveNummer <= 0)
+                {
+                    Log.Warning("Fant Lag med tomt skivenr");
+                    continue;
+                }
+
+                var foundSKive = foundTeam.SkiverILaget.Find(x => x.SkiveNummer == skive.SkiveNummer);
+                if (foundSKive == null)
+                {   Log.Info("Fant ikke skive nr {0} lag til lag nr {1}", skive.SkiveNummer, foundTeam.LagNummer);
+                    foundSKive = new Skiver(skive);
+                    foundTeam.SkiverILaget.Add(foundSKive);
+                }
 
                 if (skive.Skytter != null)
                 {
-                    var foundSkytter = m_Skyttere.Find(y => y.SkytterNr == skive.Skytter.SkytterNr);
-                    if (foundSkytter != null)
+                    if (skive.Skytter.SkytterNr == "0" && string.IsNullOrEmpty(skive.Skytter.Name))
                     {
-                        skive.Skytter.Id = foundSkytter.Id;
-                        skive.SkytterGuid = foundSkytter.Id;
+                        foundSKive.Free = true;
+                        foundSKive.Skytter = null;
+                        foundSKive.SkytterGuid = null;
                     }
                     else
                     {
-                        m_Skyttere.Add(skive.Skytter);
+                        var foundSkytter = m_Skyttere.Find(y => y.SkytterNr == skive.Skytter.SkytterNr);
+                        if (foundSkytter != null)
+                        {
+                            UpdateSkytter(foundSkytter, skive.Skytter);
+                            foundSKive.Skytter = null;
+                            foundSKive.SkytterGuid = foundSkytter.Id;
+                        }
+                        else
+                        {
+                            var nySkytter = new Skytter(skive.Skytter);
+                            foundSKive.Skytter = null;
+                            foundSKive.SkytterGuid = nySkytter.Id;
+                            m_Skyttere.Add(nySkytter);
+                            Log.Info("La til ny skytter Lag={0} skive{1} navn={2}", foundTeam.LagNummer, foundSKive.SkiveNummer, nySkytter.Name);
+                        }
                     }
+                    
+                }
+                else
+                {
+                    if (foundSKive.SkytterGuid != null)
+                    {
+                        var foundSkytter = m_Skyttere.Find(y => y.Id == foundSKive.SkytterGuid);
+                        if (foundSkytter != null)
+                        {
+                            Log.Error(
+                             "Remove skytter = {0} nr={1} from Lag={2} skive={3}",
+                             foundSkytter.Name,
+                             foundSkytter.SkytterNr,
+                             foundTeam.LagNummer,
+                             foundSKive.SkiveNummer);
+                        }
+                        
+                        foundSKive.Skytter = null;
+                    }
+
+                    foundSKive.SkytterGuid = null;
                 }
 
-                var newSKive = new Skiver(skive);
+                //var newSKive = new Skiver(skive);
 
-                foundTeam.SkiverILaget.Add(newSKive);
+                //foundTeam.SkiverILaget.Add(newSKive);
             }
 
             return foundTeam;
+        }
+
+        private void UpdateSkytter(Skytter foundSkytter, Skytter skytter)
+        {
+            Log.Info("Updating skytter with number={0}", foundSkytter.SkytterNr);
+            foundSkytter.Name = UpdateString(skytter.Name);
+            foundSkytter.Klasse = UpdateString(skytter.Klasse);
+            foundSkytter.Skytterlag = UpdateString(skytter.Skytterlag);
+            foundSkytter.SkytterlagNr = skytter.SkytterlagNr;
         }
 
         public Lag GetLeonLagWithSum(int lag)
@@ -526,6 +614,50 @@
 
 
             return nyttLag;
+        }
+
+        public Lag GetLag(int lagNr)
+        {
+            Lag funnetLag = null;
+            try
+            {
+                IniDatabase();
+                var searchLag = m_LagList.Find(x => x.LagNummer == lagNr);
+                if (searchLag == null)
+                {
+                    return null;
+                }
+                funnetLag = new Lag(searchLag);
+                var lagdef = m_LagDefinitionList.Find(x => x.LagNummer == lagNr);
+                if (lagdef != null)
+                {
+                    funnetLag.LagTid = lagdef.LagTid;
+                }
+                foreach (var skive in funnetLag.SkiverILaget)
+                {
+                    if (skive.SkytterGuid != null)
+                    {
+                        var skytt = m_Skyttere.Find(y => y.Id == skive.SkytterGuid);
+                        if (skytt != null)
+                        {
+                            var skiveFunnet = searchLag.SkiverILaget.Find(ak => ak.SkiveNummer == skive.SkiveNummer);
+                            if (skiveFunnet != null)
+                            {
+                                skiveFunnet.Skytter = new Skytter(skytt);
+                                skiveFunnet.SkytterGuid = skytt.Id;
+                                skiveFunnet.Skytter.Id = skytt.Id;
+                            }
+                        }
+                    }
+                }
+                return funnetLag;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "GetLag");
+            }
+
+            return funnetLag;
         }
 
         public List<Lag> GetLag()
